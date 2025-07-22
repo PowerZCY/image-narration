@@ -1,6 +1,6 @@
 {
   "name": "image-narration",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "keywords": [
     "fumadocs",
@@ -22,8 +22,8 @@
     "@radix-ui/react-slot": "^1.2.2",
     "@tailwindcss/typography": "latest",
     "@types/mdx": "^2.0.13",
-    "@windrun-huaiin/base-ui": "^5.3.2",
-    "@windrun-huaiin/lib": "^5.7.0",
+    "@windrun-huaiin/base-ui": "^5.3.3",
+    "@windrun-huaiin/lib": "^5.7.1",
     "@windrun-huaiin/third-ui": "^5.9.4",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",

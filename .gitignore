@@ -132,3 +132,6 @@ dist
 .source/index.ts
 .source/source.config.mjs
 
+
+# clerk configuration (can include secrets)
+/.clerk/

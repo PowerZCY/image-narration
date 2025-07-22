@@ -1,3 +1,3 @@
 import { createSiteIcon } from "@windrun-huaiin/base-ui/components/server";
 
-export const SiteIcon = createSiteIcon('Pi');
+export const SiteIcon = createSiteIcon('BrainCircuit');
