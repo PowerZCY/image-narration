@@ -277,6 +277,18 @@ export function Hero() {
           
           <div 
             onClick={handleImageClick}
+            onDragOver={e => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDrop={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              const file = e.dataTransfer.files?.[0];
+              if (file) {
+                handleImageSelect(file);
+              }
+            }}
             className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-purple-400 transition-colors min-h-[380px] flex items-center justify-center cursor-pointer relative"
           >
             {/* 格式说明 - 左上角 */}
