@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 
-import Image from "next/image"
-import { useState, useMemo, useEffect, useRef } from "react"
-import { useTranslations } from 'next-intl'
-import { globalLucideIcons as icons} from '@windrun-huaiin/base-ui/components/server'
-import { GradientButton } from "@windrun-huaiin/third-ui/fuma/mdx"
-import { AdsAlertDialog } from "@windrun-huaiin/third-ui/main";
-import { createR2Client } from "@/lib/r2-explorer-sdk"
 import { appConfig } from "@/lib/appConfig"
+import { createR2Client } from "@/lib/r2-explorer-sdk"
+import { globalLucideIcons as icons } from '@windrun-huaiin/base-ui/components/server'
+import { GradientButton } from "@windrun-huaiin/third-ui/fuma/mdx"
+import { AdsAlertDialog, XButton } from "@windrun-huaiin/third-ui/main"
+import { useTranslations } from 'next-intl'
+import Image from "next/image"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 export function Hero() {
   const t = useTranslations('hero');
@@ -21,8 +21,8 @@ export function Hero() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [translateMenuOpen, setTranslateMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<'Chinese' | 'Japanese' | 'Spanish'>('Chinese');
-  const [isTranslating, setIsTranslating] = useState(false);
+  const [selectedLanguage, _setSelectedLanguage] = useState<'Chinese' | 'Japanese' | 'Spanish'>('Chinese');
+  const [_isTranslating, setIsTranslating] = useState(false);
   const translateMenuRef = useRef<HTMLDivElement>(null);
   // 统一错误弹窗管理
   const [errorDialog, setErrorDialog] = useState<{ open: boolean, title: string, description: string }>({ open: false, title: '', description: '' });
@@ -406,7 +406,6 @@ export function Hero() {
               onClick={uploadedImageUrl ? handleGenerate : undefined}
               disabled={!uploadedImageUrl || isGenerating}
               icon={isGenerating ? <icons.Loader2 className="h-4 w-4 animate-spin mx-auto" /> : <icons.Sparkles className="h-4 w-4 text-white" />}
-              loadingText={t('button.generating')}
             />
           </div>
         </div>
@@ -419,101 +418,44 @@ export function Hero() {
             <div className="flex justify-between items-start border-border border-b-2 pb-2">
               <h4 className="text-lg font-semibold text-foreground">{t('result.title')}</h4>
               <div className="flex gap-1">
-                <button
-                  onClick={handleCopy}
-                  className="min-w-[110px] flex items-center justify-center px-4 py-2 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-white text-sm font-semibold transition-colors rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                  title={isCopied ? t('result.copied') : t('result.copy')}
-                >
-                  {isCopied ? (
-                    <>
-                      <icons.CheckCheck className="w-5 h-5 mr-1" />
-                      <span>{t('result.copied')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <icons.Copy className="w-5 h-5 mr-1" />
-                      <span>{t('result.copy')}</span>
-                    </>
-                  )}
-                </button>
+                <XButton
+                  type="single"
+                  minWidth="min-w-[110px]"
+                  button={{
+                    icon: isCopied ? <icons.CheckCheck className="w-5 h-5 mr-1" /> : <icons.Copy className="w-5 h-5 mr-1" />,
+                    text: isCopied ? t('result.copied') : t('result.copy'),
+                    onClick: handleCopy
+                  }}
+                />
                 {/* Translate button with dropdown */}
-                <div className="relative flex bg-neutral-100 dark:bg-neutral-800 rounded-full">
-                  {/* Left area: main operation */}
-                  <button
-                    className={`flex-1 flex items-center px-4 py-2 text-neutral-700 dark:text-white text-sm font-semibold transition focus:outline-none rounded-l-full hover:bg-neutral-200 dark:hover:bg-neutral-700 ${isTranslating ? 'opacity-60 cursor-not-allowed' : ''}`}
-                    disabled={isTranslating}
-                    onClick={handleTranslate}
-                    onMouseDown={e => { if (e.button === 2) e.preventDefault(); }}
-                  >
-                    {isTranslating ? (
-                      <icons.Loader2 className="w-5 h-5 mr-1 animate-spin" />
-                    ) : (
-                      <icons.Globe className="w-5 h-5 mr-1" />
-                    )}
-                    {t('result.translate')}
-                  </button>
-                  {/* Right area: dropdown */}
-                  <span
-                    className="flex items-center justify-center w-10 py-2 cursor-pointer transition hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-r-full"
-                    onClick={e => { e.stopPropagation(); setTranslateMenuOpen(v => !v); }}
-                    tabIndex={0}
-                  >
-                    <icons.ChevronDown className="w-6 h-6" />
-                  </span>
-                  {/* Dropdown menu */}
-                  {translateMenuOpen && (
-                    <div
-                      ref={translateMenuRef}
-                      className="absolute right-0 top-full w-40 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white text-sm rounded-xl shadow-lg z-50 border border-neutral-200 dark:border-neutral-700 overflow-hidden animate-fade-in"
-                    >
-                      <button 
-                        onClick={() => { setSelectedLanguage('Chinese'); translateToLanguage('Chinese'); setTranslateMenuOpen(false); }} 
-                        className="flex items-center w-full px-4 py-3 transition hover:bg-neutral-200 dark:hover:bg-neutral-600 text-left relative"
-                      >
-                        <span className="flex items-center">
-                          <icons.Globe className="w-5 h-5 mr-1" />
-                          {t('lang.chinese')}
-                        </span>
-                        <span
-                          className="absolute right-3 top-1 text-[10px] font-semibold"
-                          style={{ color: '#a855f7', pointerEvents: 'none' }}
-                        >
-                          {t('lang.hot')}
-                        </span>
-                      </button>
-                      <button 
-                        onClick={() => { setSelectedLanguage('Japanese'); translateToLanguage('Japanese'); setTranslateMenuOpen(false); }} 
-                        className="flex items-center w-full px-4 py-3 transition hover:bg-neutral-200 dark:hover:bg-neutral-600 text-left relative"
-                      >
-                        <span className="flex items-center">
-                          <icons.Globe className="w-5 h-5 mr-1" />
-                          {t('lang.japanese')}
-                        </span>
-                        <span
-                          className="absolute right-3 top-1 text-[10px] font-semibold"
-                          style={{ color: '#a855f7', pointerEvents: 'none' }}
-                        >
-                          {t('lang.new')}
-                        </span>
-                      </button>
-                      <button 
-                        onClick={() => { setSelectedLanguage('Spanish'); translateToLanguage('Spanish'); setTranslateMenuOpen(false); }} 
-                        className="flex items-center w-full px-4 py-3 transition hover:bg-neutral-200 dark:hover:bg-neutral-600 text-left relative"
-                      >
-                        <span className="flex items-center">
-                          <icons.Globe className="w-5 h-5 mr-1" />
-                          {t('lang.spanish')}
-                        </span>
-                        <span
-                          className="absolute right-3 top-1 text-[10px] font-semibold"
-                          style={{ color: '#a855f7', pointerEvents: 'none' }}
-                        >
-                          {t('lang.beta')}
-                        </span>
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <XButton
+                    type="split"
+                    mainButton={{
+                      icon: <icons.Languages className="w-5 h-5 mr-1" />,
+                      text: "Translate",
+                      onClick: handleTranslate,
+                    }}
+                    menuItems={[
+                      {
+                        icon: <icons.Languages className="w-5 h-5 mr-1" />,
+                        text: "Chinese",
+                        onClick: () => translateToLanguage('Chinese'),
+                        tag: { text: "Hot", color: "#f59e0b" }
+                      },
+                      {
+                        icon: <icons.Languages className="w-5 h-5 mr-1" />,
+                        text: "Spanish",
+                        onClick: () => translateToLanguage('Spanish'),
+                        tag: { text: "New", color: "#10b981" }
+                      },
+                      {
+                        icon: <icons.Languages className="w-5 h-5 mr-1" />,
+                        text: "Japanese",
+                        onClick: () => translateToLanguage('Japanese'),
+                        tag: { text: "Beta" }
+                      },
+                    ]}
+                  />
               </div>
             </div>
             <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{narration}</p>

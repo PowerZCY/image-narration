@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.3.0
+
+### Minor Changes
+
+- feat(button): refactor button-group by @windrun-huaiin/third-ui
+
 ## 1.2.0
 
 ### Minor Changes
