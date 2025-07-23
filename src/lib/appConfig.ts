@@ -23,7 +23,8 @@ export const appConfig = {
     bucketName: process.env.NEXT_PUBLIC_R2_BUCKET_NAME || 'bucket',
     enableMock: process.env.NEXT_PUBLIC_R2_ENABLE_MOCK === 'true',
     mockImgUrl: process.env.NEXT_PUBLIC_R2_MOCK_IMG_URL || '',
-    mockTimeout: Number(process.env.NEXT_PUBLIC_R2_MOCK_TIMEOUT) * 1000 || 2000,
+    mockTimeout: (Number(process.env.NEXT_PUBLIC_R2_MOCK_TIMEOUT) || 2 ) * 1000,
+    uploadImageMaxSizeMB: Number(process.env.NEXT_PUBLIC_R2_UPLOAD_IMAGE_MAX_SIZE) || 5,
   }
 };
 

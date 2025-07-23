@@ -14,7 +14,7 @@
     },
     "upload": {
       "title": "Upload Your Image",
-      "tip": "Support JPG, PNG, WEBP formats (max 10MB)",
+      "tip": "Support JPG, PNG, WEBP formats (max",
       "uploading": "Uploading...",
       "choose": "Choose Image",
       "dragTip": "or drag and drop here",

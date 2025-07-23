@@ -53,6 +53,14 @@ export function Hero() {
   }, [translateMenuOpen]);
 
   const handleImageSelect = async (file: File) => {
+    if (file.size > appConfig.r2.uploadImageMaxSizeMB * 1024 * 1024) {
+      setErrorDialog({
+        open: true,
+        title: 'Image too large',
+        description: `Please select an image file less than ${appConfig.r2.uploadImageMaxSizeMB}MB.`
+      });
+      return;
+    }
     setSelectedImage(file);
     const blobUrl = URL.createObjectURL(file);
     setPreviewImageUrl(blobUrl); // 立即本地预览
@@ -305,7 +313,7 @@ export function Hero() {
           >
             {/* 格式说明 - 左上角 */}
             <div className="absolute top-3 left-3 text-xs text-muted-foreground text-gray-400">
-              {t('upload.tip')}
+              {t('upload.tip')} {appConfig.r2.uploadImageMaxSizeMB}MB)
             </div>
             
             {previewImageUrl ? (

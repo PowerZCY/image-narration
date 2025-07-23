@@ -1,5 +1,15 @@
 # image-narration
 
+## 1.4.0
+
+### Minor Changes
+
+- feat(hero): improve image upload handling and tips
+
+  - Added maximum image size validation for uploads
+  - Updated upload tips to reflect maximum size
+  - Enhanced user feedback for image selection errors
+
 ## 1.3.0
 
 ### Minor Changes
