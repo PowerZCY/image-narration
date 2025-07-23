@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.4.1
+
+### Patch Changes
+
+- fix(main): section style
+
 ## 1.4.0
 
 ### Minor Changes
