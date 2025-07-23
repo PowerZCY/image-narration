@@ -8,6 +8,7 @@ const SUPPORTED_LANGUAGES = ['English', 'Japanese', 'Spanish', 'Chinese'] as con
 type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 // 公共的mock处理逻辑
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleMockResponse(mockType: 'image' | 'translate', params: any) {
   if (!appConfig.imageAI.enableMock) {
     return null;

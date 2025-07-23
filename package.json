@@ -80,6 +80,7 @@
   },
   "scripts": {
     "postinstall": "fumadocs-mdx",
+    "predev": "pnpm lint",
     "dev": "next dev --turbopack",
     "build": "pnpm generate-blog-index && next build",
     "build:dev": "pnpm generate-blog-index && next build",

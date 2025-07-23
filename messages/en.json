@@ -8,12 +8,52 @@
     "keywords": "AI image generation, text-to-image, digital art, creative tools, Image Narration, free image generation"
   },
   "hero": {
-    "mainTitle": "Transform your images into compelling stories with AI-powered",
-    "mainEyesOn": "Image Narration",
-    "description": "Transform your images into compelling stories with AI-powered narration",
-    "button": "Get Started",
-    "about": "Enjoy 20 free images daily with Reve Image",
-    "heroImageAlt": "Image Narration AI-generated artwork showcasing the power of the platform",
+    "main": {
+      "title": "Transform your images into compelling stories with AI-powered",
+      "eyesOn": "Image Narration"
+    },
+    "upload": {
+      "title": "Upload Your Image",
+      "tip": "Support JPG, PNG, WEBP formats (max 10MB)",
+      "uploading": "Uploading...",
+      "choose": "Choose Image",
+      "dragTip": "or drag and drop here",
+      "noImageTip": "No image? Try one of these",
+      "noImageUrls": [
+        "https://r2.d8ger.com/default.webp",
+        "https://r2.d8ger.com/default.webp"
+      ]
+    },
+    "prompt": {
+      "title": "Prompt",
+      "tip": "(optional, Direct AI to specific aspects)",
+      "placeholder": "Describe the mood or story of the image..."
+    },
+    "button": {
+      "uploadFirst": "Upload image first",
+      "generate": "Generate Narration",
+      "generating": "Generate Narration"
+    },
+    "result": {
+      "title": "Generated Narration",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "translate": "Translate"
+    },
+    "lang": {
+      "chinese": "Chinese",
+      "japanese": "Japanese",
+      "spanish": "Spanish",
+      "hot": "Hot",
+      "new": "New",
+      "beta": "Beta"
+    },
+    "ready": {
+      "title": "Ready to Create Magic",
+      "desc1": "Select an image and click \"Generate Narration\" to transform",
+      "desc2": "it into a compelling story with AI-powered creativity",
+      "waiting": "Waiting for your image..."
+    },
     "heroImageUrl": "https://r2.d8ger.com/default.webp"
   },
   "usage": {
