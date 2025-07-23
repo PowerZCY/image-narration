@@ -252,7 +252,7 @@ export function Hero() {
         }}
         title={errorDialog.title}
         description={errorDialog.description}
-        imgSrc="/ads/Ad-Pollo.webp"
+        imgSrc="https://r2.d8ger.com/Ad-Pollo.webp"
         imgHref="https://pollo.ai/home?ref=mzmzndj&tm_news=news"
       />
       {/* 头部标题区域 */}

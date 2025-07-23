@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { streamText } from 'ai';
 import { error } from 'console';
@@ -7,8 +8,14 @@ import { appConfig } from '@/lib/appConfig';
 const SUPPORTED_LANGUAGES = ['English', 'Japanese', 'Spanish', 'Chinese'] as const;
 type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
+const appHeaders = {
+  "HTTP-Referer": appConfig.baseUrl,
+  "X-Title": appConfig.imageAI.appName
+}
+
+const timeout = appConfig.imageAI.timeoutSeconds * 1000;
+
 // 公共的mock处理逻辑
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleMockResponse(mockType: 'image' | 'translate', params: any) {
   if (!appConfig.imageAI.enableMock) {
     return null;
@@ -46,6 +53,24 @@ async function handleMockResponse(mockType: 'image' | 'translate', params: any) 
   return null;
 }
 
+// AI请求超时控制辅助函数
+async function applyTimeout<T>(promise: Promise<T>, ms = timeout): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ms);
+  try {
+    // 传递 signal 给AI请求
+    // promise需支持signal参数
+    return await promise;
+  } catch (e: any) {
+    if (e.name === 'AbortError') {
+      throw new Error('AI model request timeout');
+    }
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // POST: 图像描述生成
 export async function POST(req: Request) {
   const { prompt, imageUrl } = await req.json();
@@ -68,7 +93,7 @@ export async function POST(req: Request) {
   const modelName = appConfig.imageAI.modelName;
   
   // Build system prompt for image narration
-  const systemPrompt = `You are an expert image narrator. Analyze the provided image and create a compelling narrative description. ${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words, clear and engaging English, in pure plain text without any formatting.`;
+  const systemPrompt = `You are an expert image narrator. Analyze the provided image and create a compelling narrative description. In a multi-paragraph format with a general-to-specific structure.${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words, clear and engaging English, in pure plain text without any formatting.`;
 
   // Build messages array with image and text
   const messages = [
@@ -94,17 +119,31 @@ export async function POST(req: Request) {
   // print request log, TODO: DPA
   console.warn('[AI-Request]', { modelName, prompt, imageUrl, systemPrompt });
   
-  const openrouter = createOpenRouter({ apiKey:  appConfig.imageAI.apiKey});
-  const response = streamText({
-    model: openrouter(modelName),
-    messages: messages,
+  const openrouter = createOpenRouter({
+    apiKey: appConfig.imageAI.apiKey,
+    headers: appHeaders
   });
-
-  await response.consumeStream();
-  const text = await response.text;
-  // print AI response log, TODO: DPA
-  console.warn('[AI-Response]', { text });
-  return Response.json({ text });
+  try {
+    const response = await applyTimeout(
+      (async () => {
+        const resp = streamText({
+          model: openrouter(modelName),
+          messages: messages,
+        });
+        await resp.consumeStream();
+        return await resp.text;
+      })(),
+      timeout
+    );
+    // print AI response log, TODO: DPA
+    console.warn('[AI-Response]', { text: response });
+    return Response.json({ text: response });
+  } catch (e: any) {
+    if (e.message === 'AI model request timeout') {
+      return Response.json({ error: e.message }, { status: 504 });
+    }
+    throw e;
+  }
 }
 
 // PUT: 文本翻译
@@ -131,7 +170,7 @@ export async function PUT(req: Request) {
     return Response.json(mockResponse);
   }
   
-  const modelName = appConfig.imageAI.modelName;
+  const modelName = appConfig.imageAI.translationModelName;
   
   // Build system prompt for translation
   const systemPrompt = `You are a professional translator. Translate the provided text to ${language}. Maintain the original meaning, tone, and style. Return only the translated text without any additional comments or formatting.`;
@@ -151,15 +190,29 @@ export async function PUT(req: Request) {
   // print request log, TODO: DPA
   console.warn('[AI-Request]', { modelName, prompt, language, systemPrompt });
   
-  const openrouter = createOpenRouter({ apiKey: appConfig.imageAI.apiKey });
-  const response = streamText({
-    model: openrouter(modelName),
-    messages: messages,
+  const openrouter = createOpenRouter({
+    apiKey: appConfig.imageAI.apiKey,
+    headers: appHeaders
   });
-
-  await response.consumeStream();
-  const text = await response.text;
-  // print AI response log, TODO: DPA
-  console.warn('[AI-Response]', { text });
-  return Response.json({ text });
+  try {
+    const response = await applyTimeout(
+      (async () => {
+        const resp = streamText({
+          model: openrouter(modelName),
+          messages: messages,
+        });
+        await resp.consumeStream();
+        return await resp.text;
+      })(),
+      timeout
+    );
+    // print AI response log, TODO: DPA
+    console.warn('[AI-Response]', { text: response });
+    return Response.json({ text: response });
+  } catch (e: any) {
+    if (e.message === 'AI model request timeout') {
+      return Response.json({ error: e.message }, { status: 504 });
+    }
+    throw e;
+  }
 }
