@@ -525,12 +525,17 @@ export function Hero() {
             </div>
             <h3 className="text-lg font-semibold text-foreground">{t('ready.title')}</h3>
             <p className="text-muted-foreground max-w-md mx-auto text-sm">
-              {t('ready.desc1')}<br />
+              {(!uploadedImageUrl ? t('ready.prefixDesc') + ' ' : '') + t('ready.desc1')}
+              <br />
               {t('ready.desc2')}
             </p>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-              <span>{t('ready.waiting')}</span>
+              <span>
+                {uploadedImageUrl
+                  ? t('ready.generating')
+                  : t('ready.waiting')}
+              </span>
             </div>
           </div>
         )}

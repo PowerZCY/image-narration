@@ -49,10 +49,12 @@
       "beta": "Beta"
     },
     "ready": {
-      "title": "Ready to Create Magic",
-      "desc1": "Select an image and click \"Generate Narration\" to transform",
-      "desc2": "it into a compelling story with AI-powered creativity",
-      "waiting": "Waiting for your image..."
+      "title": "Enjoy to Create Magic",
+      "prefixDesc": "Select an image and",
+      "desc1": "Click \"Generate Narration\" to transform it",
+      "desc2": "into a compelling story with AI-powered creativity",
+      "waiting": "Waiting for your image...",
+      "generating": "AI model is ready for you, Have fun!"
     },
     "heroImageUrl": "https://r2.d8ger.com/default.webp"
   },
