@@ -3,44 +3,160 @@ import { streamText } from 'ai';
 import { error } from 'console';
 import { appConfig } from '@/lib/appConfig';
 
-export async function POST(req: Request) {
-  const { prompt, maxChars } = await req.json();
-  // TODO: DPA
-  console.warn('[NewsUI]', { prompt, maxChars });
-  const limitMaxChars = Math.min(appConfig.newsAI.limitMaxChars, maxChars);
-  const fullPrompt = `${prompt}\nResult no more than ${limitMaxChars} characters, and as short and clear as possible, just in pure plain text without any text style or any character count`;
-  
-  const modelName = appConfig.newsAI.modelName;
-  const enableMock = appConfig.newsAI.enableMock;
+// 支持的翻译语言
+const SUPPORTED_LANGUAGES = ['English', 'Japanese', 'Spanish', 'Chinese'] as const;
+type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
-  if (enableMock) {
-    console.warn('[AI-Mock-Switch]', enableMock);
-    // mock mode, return mock data
-    if (process.env.NODE_ENV !== 'production' && appConfig.newsAI.enableMockTimeout) {
-      // mock timeout 3s
-      const timeout = appConfig.newsAI.mockTimeoutSeconds * 1000;
-      console.warn(`[AI-Mock-Timeout]${timeout}ms`);
-      await new Promise(resolve => setTimeout(resolve, timeout));
-    }
-    if (process.env.NODE_ENV !== 'production' && appConfig.newsAI.enableMockAds) {
-        // mock ads dialog
-        throw  error('MOCK TEST!')
-    }
-    const mockText = `[MockData] ${fullPrompt}`;
-    return Response.json({ text: mockText });
+// 公共的mock处理逻辑
+async function handleMockResponse(mockType: 'image' | 'translate', params: any) {
+  if (!appConfig.imageAI.enableMock) {
+    return null;
   }
 
-  // print request log, TODO: DPA
-  console.warn('[AI-Request]', { modelName, prompt, maxChars, fullPrompt });
+  console.warn('[AI-Mock-Switch]', appConfig.imageAI.enableMock);
   
-  const openrouter = createOpenRouter({ apiKey:  appConfig.newsAI.apiKey});
+  // Mock timeout
+  if (process.env.NODE_ENV !== 'production' && appConfig.imageAI.enableMockTimeout) {
+    const timeout = appConfig.imageAI.mockTimeoutSeconds * 1000;
+    console.warn(`[AI-Mock-Timeout]${timeout}ms`);
+    await new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
+  // Mock ads error
+  if (process.env.NODE_ENV !== 'production' && appConfig.imageAI.enableMockAds) {
+    throw error('MOCK TEST!');
+  }
+  
+  if (mockType === 'image') {
+    const { prompt, imageUrl } = params;
+    const mockText = `[MockData] Analyzing image: ${imageUrl}. User prompt: ${prompt || 'No specific prompt'}\n\nA solitary figure stands at the edge of a vast, windswept cliff, silhouetted against a sky ablaze with the fiery hues of a setting sun. The horizon is a molten line where deep oranges, radiant pinks, and smoldering reds bleed into the soft indigo of the approaching night.\n\nLong shadows stretch across the rugged terrain behind the person, emphasizing their isolation and stillness amidst the wild landscape. The cliff drops sharply into a churning sea far below, waves crashing against jagged rocks in a rhythmic, thunderous roar that seems to echo even in silence.\n\nThe figure, dressed in a long, flowing coat that flutters in the strong coastal breeze, stands with hands clasped behind their back, gazing out over the endless expanse of ocean. Their posture is contemplative, almost reverent, as if absorbing the magnitude of the moment.`;
+    return { text: mockText };
+  } else if (mockType === 'translate') {
+    const { prompt, language } = params;
+    const mockTranslations: Record<string, string> = {
+      'English': prompt,
+      'Japanese': `[MockData-Japanese] ${prompt}の日本語翻訳です。これは模擬翻訳データです。`,
+      'Spanish': `[MockData-Spanish] ${prompt} - Esta es una traducción simulada al español.`,
+      'Chinese': `[MockData-Chinese] ${prompt} - 这是模拟的中文翻译数据。`
+    };
+    return { text: mockTranslations[language] || mockTranslations['English'] };
+  }
+  
+  return null;
+}
+
+// POST: 图像描述生成
+export async function POST(req: Request) {
+  const { prompt, imageUrl } = await req.json();
+  
+  // Validate required parameters
+  if (!imageUrl) {
+    return Response.json({ error: 'imageUrl is required' }, { status: 400 });
+  }
+  
+  // TODO: DPA
+  console.warn('[ImageUI]', { prompt, imageUrl });
+  
+  // 检查mock模式
+  const mockResponse = await handleMockResponse('image', { prompt, imageUrl });
+  if (mockResponse) {
+    return Response.json(mockResponse);
+  }
+  
+  const limitMaxWords = appConfig.imageAI.limitMaxWords;
+  const modelName = appConfig.imageAI.modelName;
+  
+  // Build system prompt for image narration
+  const systemPrompt = `You are an expert image narrator. Analyze the provided image and create a compelling narrative description. ${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words, clear and engaging English, in pure plain text without any formatting.`;
+
+  // Build messages array with image and text
+  const messages = [
+    {
+      role: 'system' as const,
+      content: systemPrompt,
+    },
+    {
+      role: 'user' as const,
+      content: [
+        {
+          type: 'image' as const,
+          image: imageUrl,
+        },
+        {
+          type: 'text' as const,
+          text: prompt || 'Please provide a detailed narrative description of this image.',
+        },
+      ],
+    },
+  ];
+
+  // print request log, TODO: DPA
+  console.warn('[AI-Request]', { modelName, prompt, imageUrl, systemPrompt });
+  
+  const openrouter = createOpenRouter({ apiKey:  appConfig.imageAI.apiKey});
   const response = streamText({
     model: openrouter(modelName),
-    prompt: fullPrompt,
+    messages: messages,
   });
 
   await response.consumeStream();
-  // console.log('[AI-Response]', { response });
+  const text = await response.text;
+  // print AI response log, TODO: DPA
+  console.warn('[AI-Response]', { text });
+  return Response.json({ text });
+}
+
+// PUT: 文本翻译
+export async function PUT(req: Request) {
+  const { prompt, language } = await req.json();
+  
+  // Validate required parameters
+  if (!prompt) {
+    return Response.json({ error: 'prompt is required' }, { status: 400 });
+  }
+  
+  if (!language || !SUPPORTED_LANGUAGES.includes(language as SupportedLanguage)) {
+    return Response.json({ 
+      error: `language must be one of: ${SUPPORTED_LANGUAGES.join(', ')}` 
+    }, { status: 400 });
+  }
+  
+  // TODO: DPA
+  console.warn('[TranslateUI]', { prompt, language });
+  
+  // 检查mock模式
+  const mockResponse = await handleMockResponse('translate', { prompt, language });
+  if (mockResponse) {
+    return Response.json(mockResponse);
+  }
+  
+  const modelName = appConfig.imageAI.modelName;
+  
+  // Build system prompt for translation
+  const systemPrompt = `You are a professional translator. Translate the provided text to ${language}. Maintain the original meaning, tone, and style. Return only the translated text without any additional comments or formatting.`;
+
+  // Build messages array for translation
+  const messages = [
+    {
+      role: 'system' as const,
+      content: systemPrompt,
+    },
+    {
+      role: 'user' as const,
+      content: prompt,
+    },
+  ];
+
+  // print request log, TODO: DPA
+  console.warn('[AI-Request]', { modelName, prompt, language, systemPrompt });
+  
+  const openrouter = createOpenRouter({ apiKey: appConfig.imageAI.apiKey });
+  const response = streamText({
+    model: openrouter(modelName),
+    messages: messages,
+  });
+
+  await response.consumeStream();
   const text = await response.text;
   // print AI response log, TODO: DPA
   console.warn('[AI-Response]', { text });

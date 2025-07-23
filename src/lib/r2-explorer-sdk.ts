@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface ShareUrls {
   protected: {
     view: string;
@@ -47,10 +49,6 @@ interface R2Client {
   metadata: (filename: string) => Promise<FileMetadata>;
   download: (filename: string) => Promise<Blob>;
   getUrl: (filename: string, forceDownload?: boolean) => string;
-  uploadAndShare: (filename: string, file: File | Blob | ArrayBuffer | string, options?: {
-    contentType?: string;
-    expiresIn?: number;
-  }) => Promise<{ upload: UploadResult; shareUrls: ShareUrls }>;
 }
 
 /**
@@ -172,16 +170,6 @@ export function createR2Client(config: {
     getUrl(filename: string, forceDownload: boolean = false): string {
       const url = `${cleanBaseUrl}/api/buckets/${bucketName}/${encodeURIComponent(filename)}`;
       return forceDownload ? `${url}?download=true` : url;
-    },
-
-    async uploadAndShare(filename: string, file: File | Blob | ArrayBuffer | string, options: {
-      contentType?: string;
-      expiresIn?: number;
-    } = {}): Promise<{ upload: UploadResult; shareUrls: ShareUrls }> {
-      const upload = await this.upload(filename, file, options.contentType);
-      const shareUrls = await this.share(upload.file.storedFilename, options.expiresIn);
-      
-      return { upload, shareUrls };
     }
   };
 }
