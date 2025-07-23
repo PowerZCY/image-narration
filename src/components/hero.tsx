@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 export function Hero() {
   const t = useTranslations('hero');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null); // 新增缓存图片URL
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [prompt, setPrompt] = useState('');
@@ -26,26 +26,14 @@ export function Hero() {
   const translateMenuRef = useRef<HTMLDivElement>(null);
   // 统一错误弹窗管理
   const [errorDialog, setErrorDialog] = useState<{ open: boolean, title: string, description: string }>({ open: false, title: '', description: '' });
-
+  const [translatedText, setTranslatedText] = useState('');
+  const [isCopiedTranslation, setIsCopiedTranslation] = useState(false);
   // 缓存R2客户端，避免每次渲染重新创建
   const r2Client = useMemo(() => createR2Client({
     baseUrl: appConfig.r2.baseUrl,
     bucketName: appConfig.r2.bucketName,
     apiToken: appConfig.r2.apiToken
   }), []);
-
-  // 只在selectedImage变化时生成blob URL，避免每次渲染都生成新URL
-  useEffect(() => {
-    if (selectedImage) {
-      const url = URL.createObjectURL(selectedImage);
-      setImageUrl(url);
-      return () => {
-        URL.revokeObjectURL(url);
-      };
-    } else {
-      setImageUrl(null);
-    }
-  }, [selectedImage]);
 
   // 点击外部关闭翻译菜单
   useEffect(() => {
@@ -66,28 +54,24 @@ export function Hero() {
 
   const handleImageSelect = async (file: File) => {
     setSelectedImage(file);
+    const blobUrl = URL.createObjectURL(file);
+    setPreviewImageUrl(blobUrl); // 立即本地预览
     setIsUploading(true);
-    
     try {
       // 检查是否启用R2 Mock模式
       if (appConfig.r2.enableMock) {
         console.warn('[R2-Mock] Using mock upload, no actual file uploaded');
         await new Promise(resolve => setTimeout(resolve, appConfig.r2.mockTimeout));
         const mockUrl = appConfig.r2.mockImgUrl;
-        
         setUploadedImageUrl(mockUrl);
-        console.log('Mock upload successful:', mockUrl);
         return;
       }
-
       // 生成唯一文件名
       const timestamp = Date.now();
       const extension = file.name.split('.').pop() || 'webp';
       const filename = `${timestamp}_${Math.random().toString(36).substring(2)}.${extension}`;
-
       // 上传图片到R2
       const uploadResult = await r2Client.upload(filename, file, file.type);
-      
       if (uploadResult.success && uploadResult.share_urls?.public?.view) {
         setUploadedImageUrl(uploadResult.share_urls.public.view);
         console.log('Image uploaded successfully:', uploadResult.share_urls.public.view);
@@ -102,6 +86,7 @@ export function Hero() {
         description: `Failed to upload image: ${error instanceof Error ? error.message : 'Please try again.'}`
       });
       setSelectedImage(null);
+      setPreviewImageUrl(null);
     } finally {
       setIsUploading(false);
     }
@@ -134,7 +119,6 @@ export function Hero() {
     
     try {
       console.log('Generating narration for image:', uploadedImageUrl);
-      console.log('User prompt:', prompt);
       
       // 调用AI生成接口
       const response = await fetch('/api/ai-generate', {
@@ -156,6 +140,7 @@ export function Hero() {
       const result = await response.json();
       
       if (result.text) {
+        setTranslatedText('');
         setNarration(result.text);
         console.log('AI narration generated successfully');
       } else {
@@ -214,7 +199,7 @@ export function Hero() {
 
       const result = await response.json();
       if (result.text) {
-        setNarration(result.text);
+        setTranslatedText(result.text); // 只更新翻译结果
         console.log(`Text translated to ${language} successfully`);
       } else {
         throw new Error('No translated content received from AI');
@@ -231,16 +216,43 @@ export function Hero() {
     }
   };
 
+  const handleCopyTranslation = async () => {
+    try {
+      await navigator.clipboard.writeText(translatedText);
+      setIsCopiedTranslation(true);
+      setTimeout(() => {
+        setIsCopiedTranslation(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy translation: ', err);
+      setErrorDialog({
+        open: true,
+        title: 'Copy Failed',
+        description: 'Failed to copy translation. Please try again.'
+      });
+    }
+  };
+
   const handleTranslate = () => translateToLanguage(selectedLanguage);
 
   const handleClearImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedImage(null);
+    setPreviewImageUrl(null);
     setUploadedImageUrl('');
   };
 
   // 获取示例图片urls（如有）
   const noImageUrls = (t.raw('upload.noImageUrls') as string[]) || [];
+  const fallbackImg = t('upload.defaultImageUrl');
+
+  // 处理示例图片点击
+  const handleExampleImageSelect = (url: string) => {
+    setSelectedImage(null);
+    setPreviewImageUrl(url);
+    setUploadedImageUrl(url);
+    setIsUploading(false);
+  };
 
   return (
     <section className="px-16 mx-16 md:mx-32 space-y-8">
@@ -296,19 +308,16 @@ export function Hero() {
               {t('upload.tip')}
             </div>
             
-            {selectedImage ? (
+            {previewImageUrl ? (
               <div className="w-full space-y-2">
                 <div className="relative w-full max-w-lg mx-auto mt-4">
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      alt="Selected image"
-                      width={500}
-                      height={400}
-                      className="w-full h-auto max-h-[260px] rounded-lg object-contain"
-                    />
-                  )}
-                  
+                  <Image
+                    src={previewImageUrl}
+                    alt="Selected image"
+                    width={500}
+                    height={400}
+                    className="w-full h-auto max-h-[260px] rounded-lg object-contain"
+                  />
                   {/* 上传进度覆盖层 */}
                   {isUploading && (
                     <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
@@ -318,7 +327,6 @@ export function Hero() {
                       </div>
                     </div>
                   )}
-                  
                   {/* 清空图片按钮 */}
                   {!isUploading && (
                     <button
@@ -332,7 +340,8 @@ export function Hero() {
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-sm text-muted-foreground">{selectedImage.name}</p>
+                    {/* 文件名只在本地上传时显示 */}
+                    {selectedImage && <p className="text-sm text-muted-foreground">{selectedImage.name}</p>}
                     {uploadedImageUrl && (
                       <icons.Check className="h-4 w-4"/>
                     )}
@@ -361,8 +370,16 @@ export function Hero() {
                     <div
                       key={idx}
                       className="w-12 h-12 bg-muted rounded cursor-pointer hover:bg-muted/80 transition-colors flex items-center justify-center overflow-hidden"
+                      onClick={() => handleExampleImageSelect(url)}
                     >
-                      <Image src={url} alt="Example" width={48} height={48} className="object-cover w-12 h-12" />
+                      <Image 
+                        src={url} 
+                        alt="Example" 
+                        width={48} 
+                        height={48} 
+                        className="object-cover w-12 h-12" 
+                        onError={e => { (e.currentTarget as HTMLImageElement).src = fallbackImg; }}
+                      />
                     </div>
                   ))
                 : [1, 2, 3, 4].map((i) => (
@@ -459,6 +476,24 @@ export function Hero() {
               </div>
             </div>
             <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{narration}</p>
+            {/* 翻译结果区域 */}
+            {translatedText && (
+              <div className="mt-6">
+                <hr className="my-2 border-t-2 border-border" />
+                <div className="flex justify-end items-center mb-2">
+                  <XButton
+                    type="single"
+                    minWidth="min-w-[110px]"
+                    button={{
+                      icon: isCopiedTranslation ? <icons.CheckCheck className="w-5 h-5 mr-1" /> : <icons.Copy className="w-5 h-5 mr-1" />,
+                      text: isCopiedTranslation ? t('result.copied') : t('result.copy'),
+                      onClick: handleCopyTranslation
+                    }}
+                  />
+                </div>
+                <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{translatedText}</div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="border-2 border-border rounded-lg text-center space-y-3 py-8">

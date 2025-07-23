@@ -18,16 +18,13 @@
       "uploading": "Uploading...",
       "choose": "Choose Image",
       "dragTip": "or drag and drop here",
+      "defaultImageUrl": "https://r2.d8ger.com/default.webp",
       "noImageTip": "No image? Try one of these",
       "noImageUrls": [
         "https://r2.d8ger.com/narration-demo-1.webp",
         "https://r2.d8ger.com/narration-demo-2.webp",
         "https://r2.d8ger.com/narration-demo-3.webp",
-        "https://r2.d8ger.com/narration-demo-4.webp",
-        "https://r2.d8ger.com/narration-demo-5.webp",
-        "https://r2.d8ger.com/narration-demo-6.webp",
-        "https://r2.d8ger.com/narration-demo-7.webp",
-        "https://r2.d8ger.com/narration-demo-8.webp"
+        "https://r2.d8ger.com/narration-demo-4.webp"
       ]
     },
     "prompt": {
