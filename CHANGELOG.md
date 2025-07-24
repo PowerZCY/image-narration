@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.4.3
+
+### Patch Changes
+
+- fix(clerk): update dependency for signup button
+
 ## 1.4.2
 
 ### Patch Changes
