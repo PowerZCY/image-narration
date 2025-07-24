@@ -53,6 +53,6 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
       transparentMode: 'none',
     },
     i18n,
-    githubUrl: appConfig.github,
+    // githubUrl: appConfig.github,
   };
 }
