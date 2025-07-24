@@ -2,7 +2,7 @@
 
 import { Hero } from "@/components/hero";
 import { pricePlanConfig } from "@/lib/price-config";
-import { CTA, FAQ, Features, PricePlan, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main";
+import { FAQ, Features, PricePlan, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main";
 
 export default function Home() {
   return (
@@ -11,10 +11,9 @@ export default function Home() {
       <Usage />
       <Features />
       <Tips />
-      <FAQ />
-      <PricePlan pricePlanConfig={pricePlanConfig} currency="￥" />
+      <PricePlan pricePlanConfig={pricePlanConfig} currency="$" />
       <SeoContent />
-      <CTA />
+      <FAQ />
     </main>
   )
 }

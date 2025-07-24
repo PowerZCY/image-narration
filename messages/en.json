@@ -63,75 +63,63 @@
   },
   "usage": {
     "title": "How to use",
-    "eyesOn": "Newspaper Template",
+    "eyesOn": "Image Narration",
     "description": "",
     "steps": [
-      {
-        "title": "Select a Template",
-        "description": "Click on your favorite template on the left side to get started.",
-        "iconKey": "MousePointerClick"
-      },
-      {
-        "title": "Customize Your Content",
-        "description": "Edit text directly in the text area and hover over images to upload new ones.",
-        "iconKey": "Pencil"
-      },
-      {
-        "title": "Download & Share",
-        "description": "Download as an image, PDF, or share to X, Instagram, etc",
-        "iconKey": "Download"
-      }
+        {
+          "title": "Upload Your Image",
+          "description": "Select and upload the image you want to narrate.",
+          "iconKey": "MousePointerClick"
+        },
+        {
+          "title": "Add Focus (Optional)",
+          "description": "Optionally, describe the aspects of the image you want the narration to focus on.",
+          "iconKey": "Pencil"
+        },
+        {
+          "title": "Generate Narration",
+          "description": "Click the generate button to receive the narration for your image.",
+          "iconKey": "Download"
+        }
     ]
   },
   "faq": {
     "title": "Frequently Asked Questions",
     "description": "",
-    "items":[
+    "items": [
       {
-        "question": "What is this newspaper template website?",
-        "answer": "This newspaper template website allows you to create and customize professional-looking newspapers using easy-to-use templates. You can edit text, upload images, and download or share your creations."
+        "question": "What is image narration?",
+        "answer": "Image narration is an AI-powered feature that generates descriptive or creative text based on the content of an uploaded image. It helps users turn images into compelling stories or captions."
       },
       {
-        "question": "Is the newspaper template website free to use?",
-        "answer": "Yes, our newspaper template website is completely free! Access all features—templates, editing tools, and watermark-free downloads—without any cost or hidden fees. Perfect for commercial use!"
+        "question": "How do I use the image narration tool?",
+        "answer": "Simply upload an image, optionally add a focus or description, and click the 'Generate Narration' button. The AI will analyze your image and provide a narration in seconds."
       },
       {
-        "question": "How do I edit the text and images?",
-        "answer": "To edit text, simply click into the text field and start typing your content. To change images, hover over the image placeholder and select the option to upload a new image from your device."
+        "question": "Is the image narration service free?",
+        "answer": "Yes, you can use the basic image narration features for free. Premium plans are available for higher usage limits and additional features."
       },
       {
-        "question": "Do I need design experience to use the newspaper template website?",
-        "answer": "No design experience is required! Our intuitive interface and pre-designed templates make it easy for anyone to create a polished newspaper."
+        "question": "What types of images can I upload?",
+        "answer": "You can upload common image formats such as JPG, PNG, and WEBP. Please ensure your images comply with our content guidelines."
       },
       {
-        "question": "Can I preview my newspaper before downloading?",
-        "answer": "Yes, you can see real-time updates as you edit. The preview feature lets you review your newspaper to ensure it looks perfect before saving or sharing."
+        "question": "Is there a limit to how many images I can narrate?",
+        "answer": "Free users have a daily limit, while premium users enjoy higher or unlimited usage depending on their plan."
       },
       {
-        "question": "What file formats can I download my newspaper in?",
-        "answer": "You can download your newspaper as a high-quality PDF, PNG, JPG, WEBP, or SVG, suitable for printing or digital sharing."
+        "question": "Can I use the generated narration for commercial purposes?",
+        "answer": "Yes, you can use the generated narrations for personal or commercial projects. Please review our terms of service for more details."
       },
       {
-        "question": "Can I save my work and come back to it later?",
-        "answer": "Currently, you can complete your newspaper in one session. Future updates may include a save feature."
-      },
-      {
-        "question": "Are there limits to how many newspapers I can create?",
-        "answer": "No limits! You can create as many newspapers as you like, all for free."
-      },
-      {
-        "question": "Can I use my own fonts or colors?",
-        "answer": "You can use pre-set fonts and color schemes in our free online newspaper templates for a professional look. Custom font uploads may be available in future updates."
-      },
-      {
-        "question": "How can I share my finished newspaper?",
-        "answer": "After completing your newspaper, you can download it as a PDF, PNG, JPG, WEBP, or SVG and share it via email, social media, or print it for physical distribution."
+        "question": "What should I do if the narration is inaccurate?",
+        "answer": "If the narration does not meet your expectations, try uploading a clearer image or providing a more specific focus. You can also regenerate the narration for different results."
       }
     ]
   },
   "pricePlan": {
     "title": "Choose Your Plan",
-    "subtitle": "Get the best of Raphael AI with faster generation and commercial usage",
+    "subtitle": "Find the perfect plan for your creative needs",
     "billingSwitch": {
       "options": [
         { "key": "monthly", "name": "Monthly", "unit": "/month", "discountText": "", "subTitle": "Billed Monthly" },
@@ -142,14 +130,14 @@
     "plans": [
       {
         "key": "free",
-        "title": "Hobby Version",
+        "title": "Free",
         "showBillingSubTitle": false,
         "features": [
-          { "description": "Access to all templates" },
-          { "description": "Unlimited editing and customization"},
-          { "description": "Download in multiple formats" },
-          { "description": "No watermarks" },
-          { "description": "No registration required" }
+          { "description": "1 free credit per day" },
+          { "description": "No registration required" },
+          { "description": "No installation needed" },
+          { "description": "User-friendly interface" }
+        
         ],
         "button": { "text": "Get started" }
       },
@@ -158,9 +146,10 @@
         "title": "Premium Version",
         "showBillingSubTitle": true,
         "features": [
-          { "description": "All features available", "tag": "Hobby Version" },
-          { "description": "UnLimited for Export/Import" },
-          { "description": "Limited 200 credits for AI-text", "tooltip": "1 credit = 1 AI conversation" }
+          { "description": "100 credits per month","tooltip": "1 credit = 1 image narration" },
+          { "description": "Priority generation speed" },
+          { "description": "Commercial usage rights" },
+          { "description": "Email support" }
         ],
         "button": { "text": "Upgrade to Premium" }
       },
@@ -170,10 +159,9 @@
         "showBillingSubTitle": true,
         "titleTags": ["Most Popular"],
         "features": [
-          { "description": "All features available", "tag": "Premium Version" },
-          { "description": "Limited 500 credits AI-text", "tooltip": "1 credit = 1 AI conversation" },
+          { "description": "300 credits per month","tooltip": "1 credit = 1 image narration" },
           { "description": "Early access to new features" },
-          { "description": "Team Support", "tooltip": "You can get our help with priority service support" }
+          { "description": "Email support" }        
         ],
         "button": { "text": "Upgrade to Ultimate" }
       }
@@ -181,22 +169,22 @@
   },
   "features": {
     "title": "Why Choose",
-    "eyesOn": "Reve Image",
-    "description": "Create stunning newspapers with our newspaper template website! Here's why you'll love it.",
+    "eyesOn": "Image Narration",
+    "description": "Discover the advantages of choosing professional image narration. Here’s why our service stands out.",
     "items": [
       {
-        "title": "High-Quality Output",
-        "description": "Reve Image produces stunning, detailed images that rival professional artwork.",
+        "title": "Expert Narration",
+        "description": "Each image is interpreted and narrated by advanced AI, ensuring professional and insightful descriptions.",
         "iconKey": "Sparkles"
       },
       {
-        "title": "20 Free Images Daily",
-        "description": "Enjoy a generous daily allowance of 20 free images with your Reve Image account.",
+        "title": "Free Daily Usage",
+        "description": "Enjoy one free image narration every day—no cost, no hassle.",
         "iconKey": "Gift"
       },
       {
-        "title": "Intuitive Prompting",
-        "description": "The advanced AI understands natural language, making it easy to describe your vision.",
+        "title": "Effortless to Use",
+        "description": "Our intuitive interface makes it simple for anyone to generate image narrations in just a few clicks.",
         "iconKey": "MessageCircleMore"
       }
     ]
@@ -217,63 +205,55 @@
     ]
   },
   "tips": {
-    "title": "Tips for Getting the Best Results with",
-    "eyesOn": "Reve Image",
+    "title": "Tips for Better",
+    "eyesOn": "Image Narration",
     "sections": [
       {
-        "title": "Be Specific in Your Prompts",
-        "description": "When using Reve Image, the more specific your prompt, the better the results. Include details about style, lighting, mood, and composition to guide the AI toward your vision."
+        "title": "Describe the Scene Clearly",
+        "description": "Provide a clear and detailed description of what you want to see. Mention the main subject, background, and any important objects."
       },
       {
-        "title": "Experiment with Different Styles",
-        "description": "Reve Image can generate images in various artistic styles. Try adding style descriptors like \"oil painting,\" \"digital art,\" \"photorealistic,\" or \"watercolor\" to your prompts."
+        "title": "Add Style and Mood",
+        "description": "Specify the artistic style or mood you prefer, such as 'watercolor', 'cinematic', 'vintage', or 'cheerful atmosphere'."
       },
       {
-        "title": "Use Reference Artists",
-        "description": "Mentioning specific artists in your Reve Image prompts can help achieve particular aesthetics. For example, \"in the style of Van Gogh\" or \"like a Wes Anderson film.\""
+        "title": "Mention Special Context",
+        "description": "If the image has a special context or background story, you can write it separately to help the AI better understand your needs."
       },
       {
-        "title": "Iterate and Refine",
-        "description": "Don't be afraid to generate multiple images with Reve Image and refine your prompt based on the results. Each iteration brings you closer to your perfect image."
-      },
-      {
-        "title": "Consider Composition Elements",
-        "description": "Include composition details in your Reve Image prompts, such as \"close-up,\" \"wide shot,\" \"from above,\" or \"symmetrical composition\" to control the framing."
-      },
-      {
-        "title": "Maximize Your Daily Allowance",
-        "description": "With Reve Image's generous 20 free images per day, plan your creative sessions to make the most of this allowance. Save your best results to build a personal inspiration library."
+        "title": "Specify Perspective or Composition",
+        "description": "Guide the AI with terms like 'close-up', 'bird’s-eye view', 'portrait orientation', or 'symmetrical layout'."
       }
     ]
   },
   "seoContent": {
-    "title": "Mastering AI Image Generation with",
-    "eyesOn": "Reve Image",
-    "description": "Online & Free & Editable & Professional",
-    "intro": "Reve Image represents the cutting edge of AI image generation technology, offering users the ability to transform text descriptions into stunning visual content. Whether you're a designer seeking inspiration, a marketer creating content, or an artist exploring new mediums, Reve Image provides the tools to bring your imagination to life.",
+    "title": "Unlock the Power of",
+    "eyesOn": "Image Narration",
+    "description": "Transform Images into Words, Enhance Understanding",
+    "intro": "Image narration is a transformative process that converts visual content into descriptive language, making images accessible, understandable, and meaningful to a wider audience. By focusing on image narration, individuals and organizations can bridge the gap between visual information and human comprehension. Image narration is not only a tool for accessibility but also a catalyst for creativity, learning, and communication. Through image narration, every image can tell a story, convey emotions, and deliver information in a way that words alone or visuals alone cannot achieve.",
     "sections": [
       {
-        "title": "Understanding How Reve Image Works",
-        "content": "When you enter a prompt, Reve Image analyzes the semantic meaning and generates corresponding imagery that matches your description. This process happens in seconds, allowing for rapid iteration and experimentation."
+        "title": "Understanding Image Narration: Definition and Significance",
+        "content": "Image narration is the practice of describing the content, context, and meaning of an image using clear and vivid language. The core of image narration lies in its ability to translate visual elements—such as objects, actions, colors, and emotions—into words that can be understood by anyone, regardless of their ability to see the image. Image narration is essential for making visual content accessible to people with visual impairments, but its benefits extend far beyond accessibility. By using image narration, creators can ensure that their images are interpreted accurately, their messages are conveyed effectively, and their audiences are engaged on a deeper level. In a world saturated with visuals, image narration provides clarity, context, and connection."
       },
       {
-        "title": "Crafting Effective Prompts for Reve Image",
-        "content": "The key to getting exceptional results from Reve Image lies in how you structure your prompts. Begin with a clear subject, then add modifiers for style, mood, lighting, and composition. For example, instead of simply writing \"a mountain,\" try \"a majestic snow-capped mountain at golden hour, with dramatic clouds, photorealistic style.\" The Reve Image AI responds particularly well to descriptive adjectives and specific visual references."
+        "title": "The Benefits of Image Narration: Why Convert Images to Narration?",
+        "content": "The advantages of image narration are numerous and impactful. First, image narration enhances accessibility, allowing people with visual impairments to experience and understand visual content through detailed descriptions. Second, image narration improves comprehension for all audiences by providing context and highlighting important details that might otherwise be overlooked. Third, image narration fosters creativity by encouraging narrators to interpret and express the essence of an image in their own words. Fourth, image narration supports education by making complex visuals, diagrams, and artworks more approachable and memorable. Finally, image narration strengthens communication by ensuring that the intended message of an image is received and understood, regardless of cultural or linguistic differences. By embracing image narration, creators and audiences alike can unlock new levels of understanding, empathy, and engagement."
       },
       {
-        "title": "Leveraging Reve Image for Different Creative Needs",
-        "content": "Reve Image excels across various use cases. For marketing professionals, it can generate eye-catching social media graphics or conceptual product visualizations. Designers can use Reve Image to quickly prototype ideas or create mood boards. Writers and storytellers might employ Reve Image to visualize characters and settings. The versatility of Reve Image makes it an invaluable tool across creative disciplines."
+        "title": "How to Create Effective Image Narration: Tips and Techniques",
+        "content": "To produce high-quality image narration, it is important to focus on clarity, detail, and relevance. Start by observing the image carefully and identifying its main elements, such as people, objects, settings, and actions. Use descriptive language to convey not only what is visible but also the mood, atmosphere, and possible intentions behind the image. Effective image narration should be concise yet comprehensive, avoiding unnecessary jargon while ensuring that all essential information is included. Consider the needs of your audience: for educational purposes, image narration might include technical terms and explanations; for storytelling, image narration can emphasize emotions and narrative flow. Practice and feedback are key to refining your image narration skills. The more you engage in image narration, the more adept you become at capturing the essence of any visual content."
       },
       {
-        "title": "Maximizing Your Free Daily Images with Reve Image",
-        "content": "With Reve Image offering 20 free image generations daily, developing a strategic approach to your creative process becomes important. Consider starting with broader concepts and gradually refining your prompts based on the results. Save promising images and note the effective elements in your prompts. This methodical approach helps you make the most of Reve Image's generous free tier while continuously improving your results."
+        "title": "Real-World Applications of Image Narration",
+        "content": "Image narration is widely used across various fields and industries. In education, image narration helps students understand complex diagrams, historical photographs, and scientific illustrations. In media and journalism, image narration ensures that news images are accessible and their stories are accurately conveyed. In art and culture, image narration allows artworks to be appreciated by a broader audience, including those who cannot see them directly. In technology, image narration is integrated into digital platforms to make websites, apps, and social media more inclusive. Even in everyday life, image narration can be used to share memories, describe experiences, and connect with others. The versatility of image narration makes it an invaluable tool for anyone seeking to communicate more effectively and inclusively."
       },
       {
-        "title": "Combining Reve Image with Other Creative Tools",
-        "content": "While Reve Image produces impressive standalone images, its output can also serve as a starting point for further refinement. Many creators use Reve Image to generate initial concepts, then bring these images into editing software for additional customization. This hybrid workflow combines the imaginative power of Reve Image's AI with the precision of human-guided editing."
+        "title": "Maximizing the Value of Image Narration: Best Practices",
+        "content": "To fully realize the benefits of image narration, it is important to adopt best practices. Always tailor your image narration to the context and audience, ensuring that your descriptions are relevant and engaging. Use sensory language to bring images to life, describing not only what is seen but also what might be felt, heard, or imagined. Encourage interaction by inviting questions or discussions based on your image narration. Stay updated with new techniques and technologies that support image narration, such as AI-powered tools and collaborative platforms. Most importantly, recognize that image narration is a skill that grows with experience. By consistently practicing image narration, you can enhance your ability to communicate, educate, and inspire through the power of words."
       }
     ],
-    "conclusion": "As AI image generation continues to evolve, Reve Image remains at the forefront, constantly improving its capabilities and offering users new ways to express their creativity. By understanding how to effectively communicate with the Reve Image AI through well-crafted prompts, you can unlock extraordinary visual possibilities and transform how you approach creative projects."
+    "conclusion": "Image narration is revolutionizing the way we interact with visual content. By converting images into narration, we make information more accessible, foster deeper understanding, and create opportunities for creativity and connection. Image narration empowers individuals to share their perspectives, educators to enhance learning, and organizations to reach wider audiences. As the importance of image narration continues to grow, mastering this skill will become essential for anyone involved in communication, education, or creative expression. Embrace image narration and discover how transforming images into words can enrich your life, your work, and your world."
   },
   "cta": {
     "title": "Ready to Create with",
