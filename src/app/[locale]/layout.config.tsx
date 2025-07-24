@@ -12,7 +12,7 @@ export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
   const t1 = await getTranslations({ locale: locale, namespace: 'linkPreview' });
   return [
     {
-      icon: <icons.AlbumIcon />,
+      icon: <icons.CheckLine />,
       text: t1('blog'),
       url: `/${locale}/blog`,
     },

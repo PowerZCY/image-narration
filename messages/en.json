@@ -79,7 +79,7 @@
         {
           "title": "Generate Narration",
           "description": "Click the generate button to receive the narration for your image.",
-          "iconKey": "Download"
+          "iconKey": "CheckLine"
         }
     ]
   },

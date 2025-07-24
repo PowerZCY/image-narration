@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.4.2
+
+### Patch Changes
+
+- fix(site): website logo
+
 ## 1.4.1
 
 ### Patch Changes
