@@ -133,8 +133,7 @@
         "title": "Free",
         "showBillingSubTitle": false,
         "features": [
-          { "description": "1 free credit per day" },
-          { "description": "No registration required" },
+          { "description": "1 free credit per day","tooltip": "1 credit = 1 image narration" },
           { "description": "No installation needed" },
           { "description": "User-friendly interface" }
         
