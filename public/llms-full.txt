@@ -1,0 +1,48 @@
+# Image Narration
+
+> Image Narration is an advanced web-based tool that leverages AI to generate detailed, creative, and accurate text descriptions for your images. Designed for accessibility and ease of use, it supports both free and premium plans to suit a variety of creative and professional needs.
+
+## Core Features
+
+- **Free Image Narration**: Instantly upload images and receive one free AI-generated narration per day. No registration or installation required.
+- **Premium & Ultimate Plans**: Unlock higher usage limits, priority processing, commercial usage rights, and email support. See [Pricing](https://imagenarration.com#pricing) for details.
+- **User-Friendly Interface**: Simple click-to-edit text, drag-and-drop or hover to upload images, and real-time preview of generated narrations.
+- **Custom Focus**: Optionally specify aspects of the image you want the narration to emphasize for more tailored results.
+- **Commercial Use**: All generated narrations can be used for personal or commercial projects, subject to [terms of service](https://imagenarration.com/en/legal).
+- **Fast Generation**: Receive narrations in seconds, with priority speed for premium users.
+- **No Installation Needed**: 100% web-based, works on all modern browsers.
+
+## How to Use
+
+1. **Upload Your Image**: Select and upload the image you want to narrate (JPG, PNG, WEBP supported).
+2. **Add Focus (Optional)**: Optionally describe the aspects of the image you want the narration to focus on.
+3. **Generate Narration**: Click the generate button to receive a detailed narration for your image.
+4. **Copy Narration**: Use the narration as you wish, including for commercial purposes.
+
+## Pricing Plans
+
+See [Pricing](https://imagenarration.com#pricing) for full details and billing options (monthly/yearly, with discounts for annual billing).
+
+## Frequently Asked Questions
+
+- **What is image narration?**  
+  AI-powered feature that generates descriptive or creative text based on the content of an uploaded image, turning images into stories or captions.
+
+- **Is the service free?**  
+  Yes, basic features are free with daily limits. Premium plans offer higher usage and more features.
+
+- **What images are supported?**  
+  Common formats like JPG, PNG, and WEBP. Please follow content guidelines.
+
+- **Can I use narrations commercially?**  
+  Yes, generated narrations can be used for personal or commercial projects.
+
+- **What if the narration is inaccurate?**  
+  Try uploading a clearer image, providing a more specific focus, or regenerating for different results.
+
+## Resources
+
+- [Blog](https://imagenarration.com/en/blog): Learn more about image narration, AI, and creative uses.
+- [Legal](https://imagenarration.com/en/legal): Privacy policy and terms of service.
+- [FAQ](https://imagenarration.com#faq): More questions and troubleshooting.
+

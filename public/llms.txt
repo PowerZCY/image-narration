@@ -1,0 +1,13 @@
+# Image Narration
+
+> Image Narration is a tool that allows you to generate text descriptions of images.
+
+## Core Features
+- [Free Image Narration](https://imagenarration.com): Upload images, generate text descriptions.
+- [Pricing](https://imagenarration.com#pricing): List free and paid plans.
+- [Easy to Use](https://imagenarration.com#usage): Click to edit text, hover to upload images, real-time preview
+- [FAQ](https://imagenarration.com#faq): Frequently asked questions and troubleshooting
+
+## Resources
+- [Blog](https://imagenarration.com/en/blog): Information about image narration.
+- [Legal](https://imagenarration.com/en/legal):  Privacy policy and terms of service. 
