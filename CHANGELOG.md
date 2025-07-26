@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.1
+
+### Patch Changes
+
+- feat(main): gallery use R2
+
 ## 1.5.0
 
 ### Minor Changes
