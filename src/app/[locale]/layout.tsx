@@ -7,6 +7,8 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { Montserrat } from "next/font/google";
 import './globals.css';
 import React from 'react';
+import { GoogleAnalyticsScript } from "@windrun-huaiin/base-ui/components";
+import { MicrosoftClarityScript } from "@windrun-huaiin/base-ui/components";
 
 export const montserrat = Montserrat({
   weight: ['400'],
@@ -70,6 +72,8 @@ export default async function RootLayout({
             {children}
           </RootProvider>
         </body>
+        <GoogleAnalyticsScript />
+        <MicrosoftClarityScript />
       </NextIntlClientProvider>
     </html>
   )

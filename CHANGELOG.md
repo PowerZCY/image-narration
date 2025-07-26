@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.4.4
+
+### Patch Changes
+
+- fix(script): google and microsoft analysis
+
 ## 1.4.3
 
 ### Patch Changes
