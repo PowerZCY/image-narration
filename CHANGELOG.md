@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.4.5
+
+### Patch Changes
+
+- fix(main): banner refactor update and aipromt-textarea update
+
 ## 1.4.4
 
 ### Patch Changes
