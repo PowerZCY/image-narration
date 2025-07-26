@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.0
+
+### Minor Changes
+
+- refactor(main): use base component
+
 ## 1.4.5
 
 ### Patch Changes

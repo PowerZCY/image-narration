@@ -5,7 +5,7 @@ import { appConfig } from "@/lib/appConfig"
 import { createR2Client } from "@/lib/r2-explorer-sdk"
 import { globalLucideIcons as icons } from '@windrun-huaiin/base-ui/components/server'
 import { GradientButton } from "@windrun-huaiin/third-ui/fuma/mdx"
-import { AdsAlertDialog, XButton } from "@windrun-huaiin/third-ui/main"
+import { AdsAlertDialog, AIPromptTextarea, XButton } from "@windrun-huaiin/third-ui/main"
 import { useTranslations } from 'next-intl'
 import Image from "next/image"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -17,6 +17,7 @@ export function Hero() {
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [prompt, setPrompt] = useState('');
+  const [isWordLimit, setIsWordLimit] = useState(false)
   const [narration, setNarration] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -262,6 +263,11 @@ export function Hero() {
     setIsUploading(false);
   };
 
+  // 处理单词限制变化
+  const handleWordLimitChange = (isLimit: boolean) => {
+    setIsWordLimit(isLimit)
+  }
+
   return (
     <section className="px-16 mx-16 md:mx-32 space-y-8">
       {/* 错误弹窗 */}
@@ -282,7 +288,7 @@ export function Hero() {
             {t('main.eyesOn')}
           </span>
         </h1>
-        <span className="text-base md:text-2xl font-bold leading-tight">
+        <span className="text-base md:text-2xl leading-tight text-gray-400">
             {t('main.title')}
           </span>
       </div>
@@ -291,87 +297,100 @@ export function Hero() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
         {/* 左列：图片上传区域 - 占3份 */}
         <div className="lg:col-span-3 space-y-3">
-          <div className="space-y-1">
-            <h3 className="text-xl font-semibold">{t('upload.title')}</h3>
-          </div>
-          
-          <div 
-            onClick={handleImageClick}
-            onDragOver={e => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            onDrop={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              const file = e.dataTransfer.files?.[0];
-              if (file) {
-                handleImageSelect(file);
-              }
-            }}
-            className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-purple-400 transition-colors min-h-[380px] flex items-center justify-center cursor-pointer relative"
-          >
-            {/* 格式说明 - 左上角 */}
-            <div className="absolute top-3 left-3 text-xs text-muted-foreground text-gray-400">
-              {t('upload.tip')} {appConfig.r2.uploadImageMaxSizeMB}MB)
-            </div>
-            
-            {previewImageUrl ? (
-              <div className="w-full space-y-2">
-                <div className="relative w-full max-w-lg mx-auto mt-4">
-                  <Image
-                    src={previewImageUrl}
-                    alt="Selected image"
-                    width={500}
-                    height={400}
-                    className="w-full h-auto max-h-[260px] rounded-lg object-contain"
-                  />
-                  {/* 上传进度覆盖层 */}
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                      <div className="text-white text-center space-y-2">
-                        <icons.Loader2 className="h-8 w-8 animate-spin mx-auto" />
-                        <p className="text-sm">{t('upload.uploading')}</p>
+          {/* 图片上传区域 - 与AIPromptTextarea保持一致的布局结构 */}
+          <div className="space-y-2">
+            {/* 第一行：标题区域 + 上传框 */}
+            <div className="border-2 border-dashed border-border rounded-lg bg-transparent hover:border-purple-500 transition-colors">
+              {/* 标题和描述区域 */}
+              <div className="p-4 pb-2">
+                <div className="space-y-1">
+                  <span className="text-xl font-semibold text-foreground">{t('upload.title')}</span>
+                  <span className="text-xs text-gray-400 ml-2">{t('upload.tip')} {appConfig.r2.uploadImageMaxSizeMB}MB)</span>
+                </div>
+              </div>
+              
+              {/* 分割线 */}
+              <hr className="border-t-1 border-border" />
+              
+              {/* 上传内容区域 */}
+              <div className="p-1">
+                <div 
+                  onClick={handleImageClick}
+                  onDragOver={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) {
+                      handleImageSelect(file);
+                    }
+                  }}
+                  className="min-h-[310px] flex items-center justify-center cursor-pointer relative"
+                >
+                  {previewImageUrl ? (
+                    <div className="w-full space-y-2">
+                      <div className="relative w-full max-w-lg mx-auto">
+                        <Image
+                          src={previewImageUrl}
+                          alt="Selected image"
+                          width={500}
+                          height={400}
+                          className="w-full h-auto max-h-[260px] rounded-lg object-contain"
+                        />
+                        {/* 上传进度覆盖层 */}
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                            <div className="text-white text-center space-y-2">
+                              <icons.Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                              <p className="text-sm">{t('upload.uploading')}</p>
+                            </div>
+                          </div>
+                        )}
+                        {/* 清空图片按钮 */}
+                        {!isUploading && (
+                          <button
+                            onClick={handleClearImage}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-background border-2 border-border text-foreground hover:bg-destructive hover:text-destructive-foreground rounded-full flex items-center justify-center transition-colors shadow-lg"
+                            title="Remove image"
+                          >
+                            <icons.X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          {/* 文件名只在本地上传时显示 */}
+                          {selectedImage && <p className="text-sm text-muted-foreground">{selectedImage.name}</p>}
+                          {uploadedImageUrl && (
+                            <icons.Check className="h-4 w-4"/>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <icons.ImageUp className="h-12 w-12 mx-auto text-gray-400" />
+                      <div className="space-y-3">
+                        <div className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-purple-400 to-pink-600 text-white font-medium rounded-full hover:from-purple-500 hover:to-pink-700 transition-all">
+                          {t('upload.choose')}
+                        </div>
+                        <p className="text-muted-foreground">{t('upload.dragTip')}</p>
                       </div>
                     </div>
                   )}
-                  {/* 清空图片按钮 */}
-                  {!isUploading && (
-                    <button
-                      onClick={handleClearImage}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-background border-2 border-border text-foreground hover:bg-destructive hover:text-destructive-foreground rounded-full flex items-center justify-center transition-colors shadow-lg"
-                      title="Remove image"
-                    >
-                      <icons.X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    {/* 文件名只在本地上传时显示 */}
-                    {selectedImage && <p className="text-sm text-muted-foreground">{selectedImage.name}</p>}
-                    {uploadedImageUrl && (
-                      <icons.Check className="h-4 w-4"/>
-                    )}
-                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <icons.ImageUp className="h-12 w-12 mx-auto text-gray-400" />
-                <div className="space-y-3">
-                  <div className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-purple-400 to-pink-600 text-white font-medium rounded-full hover:from-purple-500 hover:to-pink-700 transition-all">
-                    {t('upload.choose')}
-                  </div>
-                  <p className="text-muted-foreground">{t('upload.dragTip')}</p>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* 示例图片 */}
-          <div className="mt-1 space-y-1 text-center">
-            <p className="text-sm text-muted-foreground">{t('upload.noImageTip')}</p>
+            </div>
+            
+            {/* 第二行：示例图片文本（对应AIPromptTextarea的单词计数位置） */}
+            <div className="flex justify-center">
+              <p className="text-sm text-muted-foreground">{t('upload.noImageTip')}</p>
+            </div>
+            
+            {/* 第三行：示例图片区域 */}
             <div className="flex gap-2 justify-center">
               {noImageUrls.length > 0
                 ? noImageUrls.map((url: string, idx: number) => (
@@ -402,27 +421,25 @@ export function Hero() {
           </div>
         </div>
 
-        {/* 右列：提示词输入区域 - 占2份 */}
+        {/* 右列：标题+提示词输入区域+单词统计+生成按钮 - 占2份 */}
         <div className="lg:col-span-2 space-y-3 flex flex-col">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold">{t('prompt.title')}</h3>
-              <span className="text-sm text-gray-400">{t('prompt.tip')}</span>
-            </div>
-          </div>
-          
-          <textarea
+          {/* 标题+提示词输入区域+单词统计 */}
+          <AIPromptTextarea
+            title={t('prompt.title')}
+            description={t('prompt.tip')}
+            embed={true}
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={setPrompt}
             placeholder={t('prompt.placeholder')}
-            className="w-full flex-1 p-4 bg-transparent border-2 border-border rounded-lg resize-none focus:outline-none focus:border-purple-400 hover:border-purple-400 transition-colors text-foreground placeholder-muted-foreground placeholder:text-base min-h-[250px]"
-            maxLength={400}
+            maxWords={400}
+            minHeight={300}
+            maxHeight={300}
+            autoScroll={true}
+            isWordLimit={isWordLimit}
+            onWordLimitChange={handleWordLimitChange}
+            extraScrollSpace={100}
           />
           
-          <div className="flex justify-end text-sm text-gray-400">
-            <span>{prompt.length}/400</span>
-          </div>
-
           <div className="flex justify-center">
             <GradientButton
               title={
