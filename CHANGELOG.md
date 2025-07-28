@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.3
+
+### Patch Changes
+
+- feat(style): i18n translation now support rich text by origin html tag
+
 ## 1.5.2
 
 ### Patch Changes
