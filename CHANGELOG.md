@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.4
+
+### Patch Changes
+
+- feat(style): price-plan now use new UI
+
 ## 1.5.3
 
 ### Patch Changes
