@@ -93,7 +93,10 @@ export async function POST(req: Request) {
   const modelName = appConfig.imageAI.modelName;
   
   // Build system prompt for image narration
-  const systemPrompt = `You are an expert image narrator. Analyze the provided image and create a compelling narrative description. In a multi-paragraph format with a general-to-specific structure.${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words, clear and engaging English, in pure plain text without any formatting.`;
+  const systemPrompt = 'You are an expert image narrator. Analyze the provided image and create a compelling narrative description.'
+  + 'In a multi-paragraph format with a general-to-specific structure, the first row is main title.'
+  +`${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words. `
+  + 'Clear and engaging English, in pure plain text without any formatting.';
 
   // Build messages array with image and text
   const messages = [
