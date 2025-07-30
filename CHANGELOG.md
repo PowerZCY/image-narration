@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.5
+
+### Patch Changes
+
+- feat(update): SEO use base component
+
 ## 1.5.4
 
 ### Patch Changes

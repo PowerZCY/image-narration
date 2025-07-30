@@ -13,6 +13,7 @@ const { Page, generateStaticParams, generateMetadata } = createFumaPage({
   mdxSourceDir: appConfig.mdxSourceDir[sourceKey],
   siteIcon: <SiteIcon />,
   FallbackPage: NotFoundPage,
+  supportedLocales: appConfig.i18n.locales as string[],
 });
 
 export default Page;
