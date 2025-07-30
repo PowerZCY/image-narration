@@ -25,7 +25,7 @@
     "@types/mdx": "^2.0.13",
     "@windrun-huaiin/base-ui": "^6.0.1",
     "@windrun-huaiin/lib": "^6.2.0",
-    "@windrun-huaiin/third-ui": "^5.13.0",
+    "@windrun-huaiin/third-ui": "^5.13.2",
     "ai": "^4.3.16",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
