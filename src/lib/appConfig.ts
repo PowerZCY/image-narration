@@ -5,7 +5,7 @@ export const appConfig = {
   ...createCommonAppConfig(LOCALE_PRESETS.EN_ONLY),
   imageAI: {
     appName: process.env.NEXT_PUBLIC_APP_NAME || 'Image Narration',
-    timeoutSeconds: Number(process.env.OPENROUTER_TIMEOUT_SECONDS) || 30,
+    timeoutSeconds: Number(process.env.OPENROUTER_TIMEOUT_SECONDS) || 300,
     apiKey: process.env.OPENROUTER_API_KEY || '',
     modelName: process.env.NEXT_PUBLIC_OPENROUTER_MODEL_NAME || '',
     translationModelName: process.env.NEXT_PUBLIC_OPENROUTER_TRANSLATION_MODEL_NAME || 'deepseek/deepseek-chat-v3-0324:free',

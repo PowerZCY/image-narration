@@ -13,8 +13,6 @@ const appHeaders = {
   "X-Title": appConfig.imageAI.appName
 }
 
-const timeout = appConfig.imageAI.timeoutSeconds * 1000;
-
 // 公共的mock处理逻辑
 async function handleMockResponse(mockType: 'image' | 'translate', params: any) {
   if (!appConfig.imageAI.enableMock) {
@@ -25,9 +23,9 @@ async function handleMockResponse(mockType: 'image' | 'translate', params: any) 
   
   // Mock timeout
   if (process.env.NODE_ENV !== 'production' && appConfig.imageAI.enableMockTimeout) {
-    const timeout = appConfig.imageAI.mockTimeoutSeconds * 1000;
-    console.warn(`[AI-Mock-Timeout]${timeout}ms`);
-    await new Promise(resolve => setTimeout(resolve, timeout));
+    const mockTimeout = appConfig.imageAI.mockTimeoutSeconds * 1000;
+    console.warn(`[AI-Mock-Timeout]${mockTimeout}ms`);
+    await new Promise(resolve => setTimeout(resolve, mockTimeout));
   }
   
   // Mock ads error
@@ -52,6 +50,8 @@ async function handleMockResponse(mockType: 'image' | 'translate', params: any) 
   
   return null;
 }
+
+const timeout = appConfig.imageAI.timeoutSeconds * 1000;
 
 // AI请求超时控制辅助函数
 async function applyTimeout<T>(promise: Promise<T>, ms = timeout): Promise<T> {
