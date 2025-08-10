@@ -9,6 +9,6 @@
 
 'use client';
 
-import { createSignInPage } from '@windrun-huaiin/third-ui/clerk';
+import { createSignInPage } from '@windrun-huaiin/third-ui/clerk/server';
 
 export default createSignInPage();

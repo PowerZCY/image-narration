@@ -1,19 +1,18 @@
-'use client';
-
 import { Hero } from "@/components/hero";
 import { pricePlanConfig } from "@/lib/price-config";
-import { FAQ, Features, PricePlan, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main";
+import { FAQ, Features, PricePlan, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main/server";
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   return (
     <>
-      <Hero />
-      <Usage />
-      <Features />
-      <Tips />
-      <PricePlan pricePlanConfig={pricePlanConfig} currency="$" />
-      <SeoContent />
-      <FAQ />
+      <Hero locale={locale}/>
+      <Usage locale={locale}/>
+      <Features locale={locale}/>
+      <Tips locale={locale}/>
+      <PricePlan locale={locale} pricePlanConfig={pricePlanConfig} currency="$" />
+      <SeoContent locale={locale}/>
+      <FAQ locale={locale}/>
     </>
   )
 }

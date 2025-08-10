@@ -1,4 +1,4 @@
-import { PricePlanAppConfig } from "@windrun-huaiin/third-ui/main";
+import { PricePlanAppConfig } from "@windrun-huaiin/third-ui/main/server";
 
 export const pricePlanConfig: PricePlanAppConfig = {
   billingOptions: [
