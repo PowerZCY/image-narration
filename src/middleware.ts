@@ -11,16 +11,41 @@ const intlMiddleware = createMiddleware({
   localeDetection: false
 });
 
-// TODO
-const allowPassWhitelist = createRouteMatcher(['/(.*)'])
+// 需要身份验证的路径
+const protectedRoutes = createRouteMatcher([
+  '/(.*)/history(.*)',
+  '/(.*)/orders(.*)',
+  '/api/user/(.*)',
+  '/api/payments/checkout',
+  '/api/payments/history',
+  '/api/ai-generate',
+])
+
+// 公开的API路径（不需要身份验证）
+const publicApiRoutes = createRouteMatcher([
+  '/api/payments/webhook',      // Stripe支付webhook
+  '/api/clerk/webhook',         // Clerk用户管理webhook  
+  '/api/anonymous-usage',       // 匿名用户使用统计
+])
 
 export default clerkMiddleware(async (auth: ClerkMiddlewareAuth, req: NextRequest) => {
-  if (!allowPassWhitelist(req)) {
-      const { userId, redirectToSignIn } = await auth()
-      if (!userId) {
+  // 跳过公开API路由的身份验证
+  if (publicApiRoutes(req)) {
+    return NextResponse.next();
+  }
+  
+  // 检查是否是受保护的路由
+  if (protectedRoutes(req)) {
+      const { userId: clerkUserId, redirectToSignIn } = await auth()
+      if (!clerkUserId) {
           return redirectToSignIn()
       }
-      console.log('User is authorized:', userId)
+      console.log('User is authorized:', clerkUserId)
+  }
+
+  // Skip i18n middleware for API routes
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
   }
 
   // handle root path to default locale permanent redirect
@@ -41,7 +66,11 @@ export default clerkMiddleware(async (auth: ClerkMiddlewareAuth, req: NextReques
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params, skip api and trpc
-    "/((?!api|trpc|_next|sitemap.xml?|robots.txt?|[^?]*.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Include API routes for authentication, skip Next.js internals and static files
+    "/((?!_next|sitemap.xml?|robots.txt?|[^?]*.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Include user and payment API routes
+    "/api/user/(.*)",
+    "/api/payments/(.*)",
+    "/api/clerk/(.*)"
   ],
 };

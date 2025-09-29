@@ -9,8 +9,10 @@ import './globals.css';
 import React from 'react';
 import { GoogleAnalyticsScript } from "@windrun-huaiin/base-ui/components";
 import { MicrosoftClarityScript } from "@windrun-huaiin/base-ui/components";
+import { ClerkProvider } from '@clerk/nextjs';
+import { UserInitializer } from '@/components/UserInitializer';
 
-export const montserrat = Montserrat({
+const _montserrat = Montserrat({
   weight: ['400'],
   subsets: ['latin'],
   display: 'swap',
@@ -59,22 +61,25 @@ export default async function RootLayout({
   const messages = await getMessages();
   return (
     <html lang={locale} suppressHydrationWarning>
-      <NextIntlClientProvider messages={messages}>
-        <body>
-          <NProgressBar />
-          <RootProvider
-            i18n={{
-              locale: locale,
-              locales: generatedLocales,
-              translations: { fumaI18nCn }[locale],
-            }}
-          >
-            {children}
-          </RootProvider>
-        </body>
-        <GoogleAnalyticsScript />
-        <MicrosoftClarityScript />
-      </NextIntlClientProvider>
+      <ClerkProvider>
+        <NextIntlClientProvider messages={messages}>
+          <body>
+            <UserInitializer />
+            <NProgressBar />
+            <RootProvider
+              i18n={{
+                locale: locale,
+                locales: generatedLocales,
+                translations: { fumaI18nCn }[locale],
+              }}
+            >
+              {children}
+            </RootProvider>
+          </body>
+          <GoogleAnalyticsScript />
+          <MicrosoftClarityScript />
+        </NextIntlClientProvider>
+      </ClerkProvider>
     </html>
   )
 }

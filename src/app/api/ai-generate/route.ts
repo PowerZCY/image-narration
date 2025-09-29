@@ -3,6 +3,12 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { streamText } from 'ai';
 import { error } from 'console';
 import { appConfig } from '@/lib/appConfig';
+import { auth } from '@clerk/nextjs/server';
+import { consumeCredits, refundCredits, confirmConsumption, checkCreditExpiration } from '@/lib/credits';
+import { supabase } from '@/lib/supabase';
+import { getOrCreateAnonUsage, consumeAnonCredit, checkAnonRateLimit } from '@/lib/anonymous';
+import { v4 as uuidv4 } from 'uuid';
+import { saveUsageHistory } from '@/lib/usage-history';
 
 // 支持的翻译语言
 const SUPPORTED_LANGUAGES = ['English', 'Japanese', 'Spanish', 'Chinese'] as const;
@@ -80,53 +86,162 @@ export async function POST(req: Request) {
     return Response.json({ error: 'imageUrl is required' }, { status: 400 });
   }
   
-  // TODO: DPA
-  console.warn('[ImageUI]', { prompt, imageUrl });
+  const requestId = uuidv4();
+  const CREDIT_COST = 1; // 每次生成消耗1积分
   
-  // 检查mock模式
-  const mockResponse = await handleMockResponse('image', { prompt, imageUrl });
-  if (mockResponse) {
-    return Response.json(mockResponse);
-  }
+  // 检查用户认证状态
+  const { userId: clerkUserId } = await auth();
   
-  const limitMaxWords = appConfig.imageAI.limitMaxWords;
-  const modelName = appConfig.imageAI.modelName;
+  let logId: number | undefined;
+  let isAnonymous = false;
   
-  // Build system prompt for image narration
-  const systemPrompt = 'You are an expert image narrator. Analyze the provided image and create a compelling narrative description.'
-  + 'In a multi-paragraph format with a general-to-specific structure, the first row is main title.'
-  +`${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words. `
-  + 'Clear and engaging English, in pure plain text without any formatting.';
-
-  // Build messages array with image and text
-  const messages = [
-    {
-      role: 'system' as const,
-      content: systemPrompt,
-    },
-    {
-      role: 'user' as const,
-      content: [
-        {
-          type: 'image' as const,
-          image: imageUrl,
-        },
-        {
-          type: 'text' as const,
-          text: prompt || 'Please provide a detailed narrative description of this image.',
-        },
-      ],
-    },
-  ];
-
-  // print request log, TODO: DPA
-  console.warn('[AI-Request]', { modelName, prompt, imageUrl, systemPrompt });
-  
-  const openrouter = createOpenRouter({
-    apiKey: appConfig.imageAI.apiKey,
-    headers: appHeaders
-  });
   try {
+    if (clerkUserId) {
+      // 已登录用户路径
+      // 直接查询用户，不创建
+      const { data: existingUser } = await supabase
+        .schema(process.env.SUPABASE_SCHEMA!)
+        .from('user_credits')
+        .select('user_id')
+        .eq('clerk_user_id', clerkUserId)
+        .single();
+      
+      if (!existingUser) {
+        console.error(`[AI_GENERATE] User ${clerkUserId} not found in database`);
+        return Response.json({ error: 'User not found in database. Please refresh and try again.' }, { status: 403 });
+      }
+      
+      const userId = existingUser.user_id;
+      
+      // 检查积分是否过期
+      const isExpired = await checkCreditExpiration(userId);
+      if (isExpired) {
+        return Response.json(
+          { error: 'Credits have expired, please purchase new credits', requiresPayment: true },
+          { status: 402 }
+        );
+      }
+      
+      // 扣减积分
+      const consumeResult = await consumeCredits(userId, CREDIT_COST, requestId);
+      if (!consumeResult.success) {
+        return Response.json(
+          { 
+            error: consumeResult.error || 'Insufficient credits, please recharge',
+            requiresPayment: true,
+            balance: consumeResult.remainingBalance || 0
+          },
+          { status: 402 }
+        );
+      }
+      
+      logId = consumeResult.logId;
+      console.log('[Credits] Consumed:', { userId, credits: CREDIT_COST, logId });
+      
+    } else {
+      // 匿名用户路径
+      isAnonymous = true;
+      const anonUsage = await getOrCreateAnonUsage(req);
+      
+      if (!anonUsage) {
+        return Response.json(
+          { 
+            error: 'Please login or enable cookies to use the service',
+            requiresAuth: true
+          },
+          { status: 403 }
+        );
+      }
+      
+      // 检查速率限制
+      const rateLimit = await checkAnonRateLimit(anonUsage.anonId);
+      if (!rateLimit.allowed) {
+        return Response.json(
+          { 
+            error: rateLimit.reason || 'Too many requests, please try again later',
+            retryAfter: 3600
+          },
+          { status: 429 }
+        );
+      }
+      
+      // 检查免费额度
+      if (anonUsage.remainingFree <= 0) {
+        return Response.json(
+          { 
+            error: 'Free trial quota exhausted, please login to continue',
+            requiresAuth: true,
+            usageCount: anonUsage.usageCount
+          },
+          { status: 402 }
+        );
+      }
+      
+      // 消费匿名额度
+      const consumeResult = await consumeAnonCredit(anonUsage.anonId, requestId);
+      if (!consumeResult.success) {
+        return Response.json(
+          { 
+            error: consumeResult.error || 'Unable to use free quota',
+            requiresAuth: true
+          },
+          { status: 402 }
+        );
+      }
+      
+      console.log('[Anonymous] Consumed free trial:', { anonId: anonUsage.anonId });
+    }
+    
+    // TODO: DPA
+    console.warn('[ImageUI]', { prompt, imageUrl, requestId, isAnonymous });
+  
+  // 检查mock模式，改为条件赋值
+  let aiResponse: string;
+  const mockResponse = await handleMockResponse('image', { prompt, imageUrl });
+  
+  if (mockResponse) {
+    // 使用 Mock 数据
+    aiResponse = mockResponse.text;
+  } else {
+    // 使用真实 AI 调用
+    const limitMaxWords = appConfig.imageAI.limitMaxWords;
+    const modelName = appConfig.imageAI.modelName;
+    
+    // Build system prompt for image narration
+    const systemPrompt = 'You are an expert image narrator. Analyze the provided image and create a compelling narrative description.'
+    + 'In a multi-paragraph format with a general-to-specific structure, the first row is main title.'
+    +`${prompt ? `Focus on: ${prompt}` : ''} Keep the result under ${limitMaxWords} words. `
+    + 'Clear and engaging English, in pure plain text without any formatting.';
+
+    // Build messages array with image and text
+    const messages = [
+      {
+        role: 'system' as const,
+        content: systemPrompt,
+      },
+      {
+        role: 'user' as const,
+        content: [
+          {
+            type: 'image' as const,
+            image: imageUrl,
+          },
+          {
+            type: 'text' as const,
+            text: prompt || 'Please provide a detailed narrative description of this image.',
+          },
+        ],
+      },
+    ];
+
+    // print request log, TODO: DPA
+    console.warn('[AI-Request]', { modelName, prompt, imageUrl, systemPrompt, requestId });
+    
+    const openrouter = createOpenRouter({
+      apiKey: appConfig.imageAI.apiKey,
+      headers: appHeaders
+    });
+    
     const response = await applyTimeout(
       (async () => {
         const resp = streamText({
@@ -138,14 +253,76 @@ export async function POST(req: Request) {
       })(),
       timeout
     );
+    
+    aiResponse = response;
+  }
+    
+    // AI生成成功，确认消费
+    if (logId && !isAnonymous) {
+      await confirmConsumption(logId);
+    }
+    
+    // 保存使用记录
+    try {
+      let userId: number | undefined;
+      let anonUserId: string | undefined;
+      
+      if (clerkUserId) {
+        // 注册用户：获取 userId
+        const { data: existingUser } = await supabase
+          .schema(process.env.SUPABASE_SCHEMA!)
+          .from('user_credits')
+          .select('user_id')
+          .eq('clerk_user_id', clerkUserId)
+          .single();
+        
+        if (existingUser) {
+          userId = existingUser.user_id;
+        }
+      } else if (isAnonymous) {
+        // 匿名用户：从之前的 anonUsage 获取 anonId
+        const anonUsage = await getOrCreateAnonUsage(req);
+        anonUserId = anonUsage?.anonId;
+      }
+      
+      await saveUsageHistory({
+        userId: userId,
+        clerkUserId: clerkUserId || undefined,
+        anonId: anonUserId,
+        imageUrl,
+        userPrompt: prompt || undefined,
+        aiNarration: aiResponse,
+        requestId
+      });
+      
+      console.log('[UsageHistory] Saved usage record:', { 
+        requestId, 
+        userId, 
+        clerkUserId, 
+        anonId: anonUserId 
+      });
+    } catch (usageError: any) {
+      // 使用记录保存失败不影响主要功能，只记录日志
+      console.error('[UsageHistory] Failed to save usage record:', usageError);
+    }
+    
     // print AI response log, TODO: DPA
-    console.warn('[AI-Response]', { text: response });
-    return Response.json({ text: response });
+    console.warn('[AI-Response]', { text: aiResponse, requestId });
+    return Response.json({ text: aiResponse, requestId });
+    
   } catch (e: any) {
+    // AI生成失败，退还积分
+    if (logId && !isAnonymous) {
+      const refunded = await refundCredits(logId, e.message || 'AI service error');
+      console.log('[Credits] Refunded due to error:', { logId, refunded, error: e.message });
+    }
+    
     if (e.message === 'AI model request timeout') {
       return Response.json({ error: e.message }, { status: 504 });
     }
-    throw e;
+    
+    console.error('[AI-Generate] Error:', e);
+    return Response.json({ error: 'AI generation failed, credits have been refunded' }, { status: 500 });
   }
 }
 

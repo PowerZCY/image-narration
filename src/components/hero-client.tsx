@@ -5,8 +5,11 @@ import { createR2Client } from "@/lib/r2-explorer-sdk"
 import { globalLucideIcons as icons } from '@windrun-huaiin/base-ui/components/server'
 import { GradientButton } from "@windrun-huaiin/third-ui/fuma/mdx"
 import { AdsAlertDialog, AIPromptTextarea, XButton } from "@windrun-huaiin/third-ui/main"
+import { useClerk, useUser } from '@clerk/nextjs'
 import Image from "next/image"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { mutate } from 'swr'
+import { CreditPurchaseModal } from "@/components/pricing/PricingDialog"
 
 interface HeroClientProps {
   translations: {
@@ -50,6 +53,8 @@ interface HeroClientProps {
 }
 
 export function HeroClient({ translations: t }: HeroClientProps) {
+  const { openSignUp } = useClerk();
+  useUser();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
@@ -65,6 +70,8 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   const translateMenuRef = useRef<HTMLDivElement>(null);
   // 统一错误弹窗管理
   const [errorDialog, setErrorDialog] = useState<{ open: boolean, title: string, description: string }>({ open: false, title: '', description: '' });
+  // 积分购买对话框管理
+  const [creditModal, setCreditModal] = useState<{ open: boolean, balance: number }>({ open: false, balance: 0 });
   const [translatedText, setTranslatedText] = useState('');
   const [isCopiedTranslation, setIsCopiedTranslation] = useState(false);
   // 缓存R2客户端，避免每次渲染重新创建
@@ -181,6 +188,22 @@ export function HeroClient({ translations: t }: HeroClientProps) {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        
+        // 检查是否需要登录
+        if (errorData.requiresAuth && openSignUp) {
+          openSignUp();
+          return;
+        }
+        
+        // 检查是否需要充值
+        if (errorData.requiresPayment) {
+          setCreditModal({
+            open: true,
+            balance: errorData.balance || 0
+          });
+          return;
+        }
+        
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
@@ -190,6 +213,8 @@ export function HeroClient({ translations: t }: HeroClientProps) {
         setTranslatedText('');
         setNarration(result.text);
         console.log('AI narration generated successfully');
+        // 生成成功后立即刷新余额显示
+        mutate('/api/user/credits');
       } else {
         throw new Error('No text content received from AI');
       }
@@ -318,6 +343,15 @@ export function HeroClient({ translations: t }: HeroClientProps) {
         description={errorDialog.description}
         imgSrc="https://r2.d8ger.com/Ad-Pollo.webp"
         imgHref="https://pollo.ai/home?ref=mzmzndj&tm_news=news"
+      />
+      
+      {/* 积分购买对话框 */}
+      <CreditPurchaseModal
+        open={creditModal.open}
+        onOpenChange={open => {
+          if (!open) setCreditModal({ open: false, balance: 0 });
+        }}
+        currentBalance={creditModal.balance}
       />
       {/* 头部标题区域 */}
       <div className="text-center space-y-3">
@@ -478,7 +512,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
             extraScrollSpace={100}
           />
           
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2">
             <GradientButton
               title={
                 !uploadedImageUrl ? t.button.uploadFirst : t.button.generate
@@ -487,6 +521,11 @@ export function HeroClient({ translations: t }: HeroClientProps) {
               disabled={!uploadedImageUrl || isGenerating}
               icon={isGenerating ? <icons.Loader2 className="h-4 w-4 animate-spin mx-auto" /> : <icons.Sparkles className="h-4 w-4 text-white" />}
             />
+            {uploadedImageUrl && !isGenerating && (
+              <div className="text-sm text-gray-500 flex items-center justify-center">
+                <span>1 credit required</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

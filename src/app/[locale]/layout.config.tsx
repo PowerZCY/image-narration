@@ -2,7 +2,8 @@ import { i18n } from '@/i18n';
 import { appConfig } from '@/lib/appConfig';
 import { SiteIcon } from '@/lib/site-config';
 import { globalLucideIcons as icons } from '@windrun-huaiin/base-ui/components/server';
-import { ClerkUser } from '@windrun-huaiin/third-ui/clerk/server';
+import { DClerkUser } from '@/components/clerk-user';
+import { DynamicNavLinks } from '@/components/dynamic-nav-links';
 import { type LinkItemType } from 'fumadocs-ui/layouts/docs';
 import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { getTranslations } from 'next-intl/server';
@@ -17,16 +18,21 @@ export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
       url: `/${locale}/blog`,
     },
     {
+      type: 'custom',
+      secondary: false,
+      children: <DynamicNavLinks />
+    },
+    {
       icon: <icons.BTC />,
       text: t1('pricing'),
-      url: `/${locale}#pricing`,
+      url: `/${locale}/pricing`,
     },
     {
       type: 'custom',
       // false to put the menu on the left, true to put the button on the right
       secondary: true,
       // NicknameFilter is also used in its internal useNickname
-      children: <ClerkUser locale={locale} clerkAuthInModal={appConfig.style.clerkAuthInModal} />
+      children: <DClerkUser locale={locale} clerkAuthInModal={appConfig.style.clerkAuthInModal} />
     },
   ];
 }
