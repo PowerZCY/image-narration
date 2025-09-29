@@ -190,8 +190,17 @@ export function HeroClient({ translations: t }: HeroClientProps) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         
         // 检查是否需要登录
-        if (errorData.requiresAuth && openSignUp) {
-          openSignUp();
+        if (errorData.requiresAuth) {
+          if (typeof openSignUp === 'function') {
+            openSignUp();
+          } else {
+            // 备用方案：显示错误信息提示用户手动登录
+            setErrorDialog({
+              open: true,
+              title: 'Login Required',
+              description: 'Please login to continue using the service.'
+            });
+          }
           return;
         }
         
