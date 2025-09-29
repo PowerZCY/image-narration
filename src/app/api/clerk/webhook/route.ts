@@ -204,10 +204,27 @@ export async function POST(req: NextRequest) {
         event_type: type,                            // EVENT TYPE
         event_data: evt,                             // 完整事件数据
         clerk_user_id: data?.id || null,             // 用户ID（如果有）
-        // 使用evt.timestamp作为事件发生时间
-        event_timestamp: (evt as any).timestamp
-          ? new Date((evt as any).timestamp * 1000).toISOString()  // Unix timestamp转ISO
-          : null
+        // 使用evt.timestamp作为事件发生时间（Clerk发送毫秒级时间戳）
+        event_timestamp: (() => {
+          const timestamp = (evt as any).timestamp;
+          if (!timestamp) return null;
+          
+          try {
+            const timestampNum = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp;
+            const date = new Date(timestampNum);
+            
+            // 验证日期是否合理
+            if (isNaN(date.getTime()) || date.getFullYear() < 1970 || date.getFullYear() > 2100) {
+              console.warn(`[CLERK_WEBHOOK] Invalid timestamp ${timestamp}, leaving as null`);
+              return null;
+            }
+            
+            return date.toISOString();
+          } catch (error) {
+            console.error(`[CLERK_WEBHOOK] Failed to parse timestamp ${timestamp}, leaving as null:`, error);
+            return null;
+          }
+        })()
       };
       
       console.log(`[CLERK_WEBHOOK] Inserting event data:`, {
