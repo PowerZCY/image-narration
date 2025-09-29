@@ -194,9 +194,12 @@ export async function POST(req: NextRequest) {
 
     // 保存事件到数据库用于审计和回溯
     try {
+      const schemaName = process.env.SUPABASE_SCHEMA;
+      console.log(`[CLERK_WEBHOOK] Using schema: ${schemaName}`);
+      
       // 保存事件记录
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      await supabase.schema(process.env.SUPABASE_SCHEMA!).from('clerk_events').insert({
+      const insertData = {
         event_id: svix_id,                           // MESSAGE ID (Dashboard中显示的)
         event_type: type,                            // EVENT TYPE
         event_data: evt,                             // 完整事件数据
@@ -205,13 +208,32 @@ export async function POST(req: NextRequest) {
         event_timestamp: (evt as any).timestamp
           ? new Date((evt as any).timestamp * 1000).toISOString()  // Unix timestamp转ISO
           : null
-      });
-      /* eslint-enable @typescript-eslint/no-explicit-any */
+      };
       
-      console.log(`[CLERK_WEBHOOK] Event ${type} saved to database`);
+      console.log(`[CLERK_WEBHOOK] Inserting event data:`, {
+        event_id: insertData.event_id,
+        event_type: insertData.event_type,
+        clerk_user_id: insertData.clerk_user_id,
+        event_timestamp: insertData.event_timestamp
+      });
+      
+      const { data: insertResult, error: insertError } = await supabase
+        .schema(schemaName!)
+        .from('clerk_events')
+        .insert(insertData)
+        .select();
+      
+      if (insertError) {
+        console.error('[CLERK_WEBHOOK] Insert error details:', insertError);
+        throw insertError;
+      }
+      
+      console.log(`[CLERK_WEBHOOK] Event ${type} saved successfully:`, insertResult);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
     } catch (error) {
       // 记录失败不应阻断webhook处理
       console.error('[CLERK_WEBHOOK] Failed to save event to database:', error);
+      console.error('[CLERK_WEBHOOK] Error details:', JSON.stringify(error, null, 2));
     }
 
     let result;
