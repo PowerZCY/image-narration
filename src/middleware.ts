@@ -13,7 +13,7 @@ const intlMiddleware = createMiddleware({
 
 // 需要身份验证的路径
 const protectedRoutes = createRouteMatcher([
-  '/(.*)/history(.*)',
+  '/(.*)/activity(.*)',
   '/(.*)/orders(.*)',
   '/api/user/(.*)',
   '/api/payments/checkout',

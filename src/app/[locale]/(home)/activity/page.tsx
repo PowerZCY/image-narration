@@ -9,11 +9,11 @@ export default async function UsageHistoryPage({ params }: { params: Promise<{ l
   
   // 检查用户是否已登录，未登录重定向到登录页面
   if (!userId) {
-    redirect(`/${locale}/sign-in?redirect=${encodeURIComponent(`/${locale}/history`)}`);
+    redirect(`/${locale}/sign-in?redirect=${encodeURIComponent(`/${locale}/activity`)}`);
   }
 
   // 获取翻译
-  const t = await getTranslations({ locale, namespace: 'history' });
+  const t = await getTranslations({ locale, namespace: 'activity' });
 
   return (
     <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl min-h-[70vh]">

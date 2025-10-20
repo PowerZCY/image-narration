@@ -18,14 +18,14 @@ export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
       url: `/${locale}/blog`,
     },
     {
-      type: 'custom',
-      secondary: false,
-      children: <DynamicNavLinks />
-    },
-    {
       icon: <icons.BTC />,
       text: t1('pricing'),
       url: `/${locale}/pricing`,
+    },
+    {
+      type: 'custom',
+      secondary: false,
+      children: <DynamicNavLinks />
     },
     {
       type: 'custom',

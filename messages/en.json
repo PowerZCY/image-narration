@@ -298,17 +298,17 @@
   },
   "linkPreview": {
     "blog": "Blog",
-    "history": "Usage History",
+    "activity": "Activity",
     "pricing": "Pricing",
     "legal": "Legal",
     "docs": "Docs"
   },
-  "history": {
-    "title": "Usage History",
-    "description": "View your complete history of AI image narrations, including all images processed and descriptions generated.",
-    "loading": "Loading your usage history...",
-    "error": "Error loading usage history",
-    "noData": "No history yet",
+  "activity": {
+    "title": "Activity",
+    "description": "Review your complete activity for AI image narrations, including all images processed and descriptions generated.",
+    "loading": "Loading your activity...",
+    "error": "Error loading activity",
+    "noData": "No activity yet",
     "noDataDescription": "Start generating image narrations to see them here.",
     "loadMore": "Load More",
     "copy": "Copy",
@@ -321,7 +321,7 @@
     "showLess": "Show Less",
     "noPrompt": "Not provided",
     "delete": "Delete",
-    "deleteConfirm": "Are you sure you want to delete this usage record?",
+    "deleteConfirm": "Are you sure you want to delete this activity record?",
     "deleting": "Deleting...",
     "deleteSuccess": "Record deleted successfully",
     "deleteError": "Failed to delete record",
