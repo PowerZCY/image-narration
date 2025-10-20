@@ -17,7 +17,7 @@ const protectedRoutes = createRouteMatcher([
   '/(.*)/orders(.*)',
   '/api/user/(.*)',
   '/api/payments/checkout',
-  '/api/payments/history',
+  '/api/payments/activity',
 ])
 
 // 公开的API路径（不需要身份验证）
