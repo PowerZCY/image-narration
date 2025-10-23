@@ -8,8 +8,10 @@ import { AdsAlertDialog, AIPromptTextarea, XButton } from "@windrun-huaiin/third
 import { useClerk, useUser } from '@clerk/nextjs'
 import Image from "next/image"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { mutate } from 'swr'
+import useSWR, { mutate } from 'swr'
 import { CreditPurchaseModal } from "@/components/pricing/PricingDialog"
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface HeroClientProps {
   translations: {
@@ -35,6 +37,10 @@ interface HeroClientProps {
     button: {
       uploadFirst: string
       generate: string
+      anonymousTrial: string
+      newUserHintSingle: string
+      newUserHintPlural: string
+      creditRequired: string
     }
     result: {
       title: string
@@ -54,7 +60,21 @@ interface HeroClientProps {
 
 export function HeroClient({ translations: t }: HeroClientProps) {
   const { openSignUp } = useClerk();
-  useUser();
+  const { user, isLoaded } = useUser();
+
+  // 获取用户积分信息
+  const { data: creditsData } = useSWR(
+    user ? '/api/user/credits' : null,
+    fetcher,
+    { revalidateOnFocus: true }
+  );
+
+  // 获取用户付费状态
+  const { data: paidOrdersData } = useSWR(
+    user ? '/api/user/has-paid-orders' : null,
+    fetcher,
+    { revalidateOnFocus: true }
+  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
@@ -340,6 +360,43 @@ export function HeroClient({ translations: t }: HeroClientProps) {
     setIsWordLimit(isLimit)
   }
 
+  // 动态提示逻辑
+  const getCreditHintText = () => {
+    // Clerk 数据未加载完成，隐藏提示避免闪烁
+    if (!isLoaded) {
+      return null;
+    }
+
+    // 未登录用户
+    if (!user) {
+      return t.button.anonymousTrial;
+    }
+
+    // 已登录用户，但 SWR 数据还在加载中，隐藏提示避免闪烁
+    if (!creditsData || !paidOrdersData) {
+      return null;
+    }
+
+    // 已登录用户，所有数据已加载完成
+    const balance = creditsData.balance || 0;
+    const hasPaidOrders = paidOrdersData.hasPaidOrders || false;
+
+    // 新用户判断：无付费记录 且 余额≤5
+    const isNewUser = !hasPaidOrders && balance > 0 && balance <= 5;
+
+    if (isNewUser) {
+      // 新用户显示剩余免费次数
+      if (balance === 1) {
+        return t.button.newUserHintSingle;
+      }
+      // 使用 # 作为占位符，避免 next-intl 的格式化检查
+      return t.button.newUserHintPlural.replace('#', String(balance));
+    }
+
+    // 其他情况显示标准提示
+    return t.button.creditRequired;
+  };
+
   return (
     <section className="px-16 mx-16 md:mx-32 space-y-8">
       {/* 错误弹窗 */}
@@ -530,9 +587,10 @@ export function HeroClient({ translations: t }: HeroClientProps) {
               disabled={!uploadedImageUrl || isGenerating}
               icon={isGenerating ? <icons.Loader2 className="h-4 w-4 animate-spin mx-auto" /> : <icons.Sparkles className="h-4 w-4 text-white" />}
             />
-            {uploadedImageUrl && !isGenerating && (
+            {/* 动态提示：数据加载完成后显示,避免闪烁 */}
+            {!isGenerating && getCreditHintText() && (
               <div className="text-sm text-gray-500 flex items-center justify-center">
-                <span>1 credit required</span>
+                <span>{getCreditHintText()}</span>
               </div>
             )}
           </div>

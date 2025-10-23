@@ -14,6 +14,8 @@ interface ClerkUserProps {
 interface ClerkUserData {
   signIn: string;
   signUp: string;
+  signUpBonus: string;
+  signUpBonusTooltip: string;
   terms: string;
   privacy: string;
   orders: string;
@@ -49,6 +51,8 @@ export async function DClerkUser({
   const data: ClerkUserData = {
     signIn: t('signIn'),
     signUp: t('signUp'),
+    signUpBonus: t('signUpBonus'),
+    signUpBonusTooltip: t('signUpBonusTooltip'),
     terms: t2('terms'),
     privacy: t2('privacy'),
     orders: t('orders'),

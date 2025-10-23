@@ -27,7 +27,11 @@ export async function Hero({ locale }: { locale: string }) {
     },
     button: {
       uploadFirst: t('button.uploadFirst'),
-      generate: t('button.generate')
+      generate: t('button.generate'),
+      anonymousTrial: t('button.anonymousTrial'),
+      newUserHintSingle: t('button.newUserHintSingle'),
+      newUserHintPlural: t('button.newUserHintPlural'),
+      creditRequired: t('button.creditRequired')
     },
     result: {
       title: t('result.title'),

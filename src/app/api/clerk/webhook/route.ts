@@ -32,6 +32,10 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
   }
 
   try {
+    // 计算积分到期时间（1年后）
+    const expiresAt = new Date();
+    expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
     // 直接在user_credits表中创建用户记录（包含积分信息）
     const { data: userData, error: userError } = await supabase
       .schema(process.env.SUPABASE_SCHEMA!)
@@ -40,7 +44,8 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
         clerk_user_id: clerkUserId,
         email,
         display_name: displayName,
-        balance: 0,
+        balance: 5,
+        expires_at: expiresAt.toISOString(),
       })
       .select('user_id')
       .single();
@@ -54,8 +59,33 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
       throw userError;
     }
 
-    console.log(`[CLERK_WEBHOOK] Successfully created user ${clerkUserId} with ID ${userData.user_id}`);
-    return { success: true, userId: userData.user_id };
+    const userId = userData.user_id;
+
+    // 记录注册赠送到 credit_logs
+    const refId = `signup_bonus_${clerkUserId}`;
+    const { error: logError } = await supabase
+      .schema(process.env.SUPABASE_SCHEMA!)
+      .from('credit_logs')
+      .insert({
+        user_id: userId,
+        clerk_user_id: clerkUserId,
+        type: 'signup_bonus',
+        status: 'confirmed',
+        credits: 5,
+        ref_id: refId,
+        metadata: {
+          reason: 'New user signup bonus',
+          expires_in_days: 365,
+        },
+      });
+
+    if (logError) {
+      console.error(`[CLERK_WEBHOOK] Failed to log signup bonus for ${clerkUserId}:`, logError);
+      // 不阻断用户创建，仅记录错误
+    }
+
+    console.log(`[CLERK_WEBHOOK] Successfully created user ${clerkUserId} with ID ${userId} and 5 signup bonus credits`);
+    return { success: true, userId };
   } catch (error) {
     console.error('[CLERK_WEBHOOK] Failed to create user:', error);
     return { success: false, error: 'Failed to create user' };

@@ -36,7 +36,11 @@
       "uploadFirst": "Upload image first",
       "generate": "Generate Narration",
       "generating": "Generate Narration",
-      "creditCost": "1 credit"
+      "creditCost": "1 credit",
+      "anonymousTrial": "✨ Try once for free • Sign up for 5 more free narrations!",
+      "newUserHintSingle": "🎁 1 free credit left",
+      "newUserHintPlural": "🎁 # free credits left",
+      "creditRequired": "1 credit required"
     },
     "result": {
       "title": "Generated Narration",
@@ -288,6 +292,8 @@
   "clerk": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
+    "signUpBonus": "+5",
+    "signUpBonusTooltip": "Sign up and get 5 free credits!",
     "orders": "Orders"
   },
   "credits": {
