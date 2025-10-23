@@ -381,8 +381,8 @@ export function HeroClient({ translations: t }: HeroClientProps) {
     const balance = creditsData.balance || 0;
     const hasPaidOrders = paidOrdersData.hasPaidOrders || false;
 
-    // 新用户判断：无付费记录 且 余额≤5
-    const isNewUser = !hasPaidOrders && balance > 0 && balance <= 5;
+    // 新用户判断：无付费记录 且 余额≤2
+    const isNewUser = !hasPaidOrders && balance > 0 && balance <= 2;
 
     if (isNewUser) {
       // 新用户显示剩余免费次数

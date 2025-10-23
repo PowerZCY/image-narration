@@ -44,7 +44,7 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
         clerk_user_id: clerkUserId,
         email,
         display_name: displayName,
-        balance: 5,
+        balance: 2,
         expires_at: expiresAt.toISOString(),
       })
       .select('user_id')
@@ -71,7 +71,7 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
         clerk_user_id: clerkUserId,
         type: 'signup_bonus',
         status: 'confirmed',
-        credits: 5,
+        credits: 2,
         ref_id: refId,
         metadata: {
           reason: 'New user signup bonus',
@@ -84,7 +84,7 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
       // 不阻断用户创建，仅记录错误
     }
 
-    console.log(`[CLERK_WEBHOOK] Successfully created user ${clerkUserId} with ID ${userId} and 5 signup bonus credits`);
+    console.log(`[CLERK_WEBHOOK] Successfully created user ${clerkUserId} with ID ${userId} and 2 signup bonus credits`);
     return { success: true, userId };
   } catch (error) {
     console.error('[CLERK_WEBHOOK] Failed to create user:', error);

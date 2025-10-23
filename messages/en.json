@@ -37,7 +37,7 @@
       "generate": "Generate Narration",
       "generating": "Generate Narration",
       "creditCost": "1 credit",
-      "anonymousTrial": "✨ Try once for free • Sign up for 5 more free narrations!",
+      "anonymousTrial": "✨ Try once for free • Sign up for 2 more free narrations!",
       "newUserHintSingle": "🎁 1 free credit left",
       "newUserHintPlural": "🎁 # free credits left",
       "creditRequired": "1 credit required"
@@ -292,8 +292,8 @@
   "clerk": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
-    "signUpBonus": "+5",
-    "signUpBonusTooltip": "Sign up and get 5 free credits!",
+    "signUpBonus": "+2",
+    "signUpBonusTooltip": "Sign up and get 2 free credits!",
     "orders": "Orders"
   },
   "credits": {
