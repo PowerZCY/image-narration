@@ -76,7 +76,7 @@ CREATE TABLE narration.credit_logs (
   clerk_user_id text,                                        -- Clerk ID，便于排查
   anon_id text,                                             -- 匿名访客 ID
   type text NOT NULL 
-    CHECK (type IN ('recharge','consume','expire')),        -- 积分变动类型
+    CHECK (type IN ('recharge','consume','expire')),        -- 积分变动类型  20251023添加signup_bonus注册赠送
   status text NOT NULL DEFAULT 'confirmed' 
     CHECK (status IN ('pending','confirmed','refunded')),    -- 日志状态
   credits integer NOT NULL,                                  -- 变动数值（正数为增加，负数为减少）
@@ -414,7 +414,7 @@ BEGIN
   END IF;
 
   -- 退还积分
-  UPDATE user_credits
+  UPDATE narration.user_credits
   SET balance = balance + v_credits,
       updated_at = now()
   WHERE user_id = v_user_id;
