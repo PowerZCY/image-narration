@@ -232,6 +232,15 @@ export function HeroClient({ translations: t }: HeroClientProps) {
           });
           return;
         }
+
+        if (errorData.error === 'AI model request timeout') {
+          setErrorDialog({
+            open: true,
+            title: 'Request Timed Out',
+            description: 'The AI took too long to respond. Your credits have been refunded automatically. Please try again in a few minutes.',
+          });
+          return;
+        }
         
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
@@ -249,6 +258,14 @@ export function HeroClient({ translations: t }: HeroClientProps) {
       }
     } catch (error) {
       console.error('Failed to generate narration:', error);
+      if (error instanceof Error && error.message === 'AI model request timeout') {
+        setErrorDialog({
+          open: true,
+          title: 'Request Timed Out',
+          description: 'The AI took too long to respond. Your credits have been refunded automatically. Please try again in a few minutes.',
+        });
+        return;
+      }
       setErrorDialog({
         open: true,
         title: 'Generation Failed',

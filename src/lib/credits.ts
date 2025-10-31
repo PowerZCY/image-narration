@@ -99,7 +99,12 @@ export async function consumeCredits(
   };
 }
 
-export async function refundCredits(logId: number, reason?: string): Promise<boolean> {
+export interface RefundResult {
+  success: boolean;
+  reason?: string;
+}
+
+export async function refundCredits(logId: number, reason?: string): Promise<RefundResult> {
   const { data: log, error: logError } = await supabase
     .schema(process.env.SUPABASE_SCHEMA!)
     .from('credit_logs')
@@ -110,7 +115,10 @@ export async function refundCredits(logId: number, reason?: string): Promise<boo
     .single();
 
   if (logError || !log) {
-    return false;
+    return {
+      success: false,
+      reason: logError ? `Failed to load log: ${logError.message}` : 'No pending consume log found for refund',
+    };
   }
 
   const { error } = await supabase
@@ -120,7 +128,14 @@ export async function refundCredits(logId: number, reason?: string): Promise<boo
       p_reason: reason || 'AI service error',
     });
 
-  return !error;
+  if (error) {
+    return {
+      success: false,
+      reason: `Refund RPC failed: ${error.message}`,
+    };
+  }
+
+  return { success: true };
 }
 
 export async function confirmConsumption(logId: number): Promise<boolean> {

@@ -60,20 +60,29 @@ async function handleMockResponse(mockType: 'image' | 'translate', params: any) 
 const timeout = appConfig.imageAI.timeoutSeconds * 1000;
 
 // AI请求超时控制辅助函数
-async function applyTimeout<T>(promise: Promise<T>, ms = timeout): Promise<T> {
+async function applyTimeout<T>(
+  executor: (signal: AbortSignal) => Promise<T>,
+  ms = timeout
+): Promise<T> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), ms);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      controller.abort();
+      reject(new Error('AI model request timeout'));
+    }, ms);
+  });
   try {
-    // 传递 signal 给AI请求
-    // promise需支持signal参数
-    return await promise;
+    return await Promise.race([executor(controller.signal), timeoutPromise]);
   } catch (e: any) {
-    if (e.name === 'AbortError') {
+    if (controller.signal.aborted || e?.name === 'AbortError') {
       throw new Error('AI model request timeout');
     }
     throw e;
   } finally {
-    clearTimeout(timeout);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   }
 }
 
@@ -136,7 +145,14 @@ export async function POST(req: Request) {
       }
       
       logId = consumeResult.logId;
-      console.log('[Credits] Consumed:', { userId, credits: CREDIT_COST, logId });
+      console.log('[Credits] Consumed:', {
+        userId,
+        clerkUserId,
+        requestId,
+        credits: CREDIT_COST,
+        logId,
+        consumeResult,
+      });
       
     } else {
       // 匿名用户路径
@@ -236,30 +252,36 @@ export async function POST(req: Request) {
 
     // print request log, TODO: DPA
     console.warn('[AI-Request]', { modelName, prompt, imageUrl, systemPrompt, requestId });
+    console.warn('[AI] streamText start', {
+      requestId,
+      modelName,
+      hasPrompt: Boolean(prompt),
+    });
     
     const openrouter = createOpenRouter({
       apiKey: appConfig.imageAI.apiKey,
       headers: appHeaders
     });
     
-    const response = await applyTimeout(
-      (async () => {
-        const resp = streamText({
-          model: openrouter(modelName),
-          messages: messages,
-        });
-        await resp.consumeStream();
-        return await resp.text;
-      })(),
-      timeout
-    );
+    const response = await applyTimeout(async (signal) => {
+      const resp = streamText({
+        model: openrouter(modelName),
+        messages: messages,
+        abortSignal: signal,
+      });
+      await resp.consumeStream();
+      return await resp.text;
+    }, timeout);
     
     aiResponse = response;
   }
     
     // AI生成成功，确认消费
     if (logId && !isAnonymous) {
-      await confirmConsumption(logId);
+      const confirmed = await confirmConsumption(logId);
+      if (!confirmed) {
+        throw new Error('Failed to confirm credit consumption');
+      }
     }
     
     // 保存使用记录
@@ -311,13 +333,47 @@ export async function POST(req: Request) {
     return Response.json({ text: aiResponse, requestId });
     
   } catch (e: any) {
+    console.error('[Credits] refund path', {
+      requestId,
+      logId,
+      isAnonymous,
+      error: e,
+    });
     // AI生成失败，退还积分
+    let refundResult: Awaited<ReturnType<typeof refundCredits>> | undefined;
     if (logId && !isAnonymous) {
-      const refunded = await refundCredits(logId, e.message || 'AI service error');
-      console.log('[Credits] Refunded due to error:', { logId, refunded, error: e.message });
+      refundResult = await refundCredits(logId, e.message || 'AI service error');
+      if (!refundResult.success) {
+        console.warn('[Credits] refund failed', {
+          requestId,
+          logId,
+          reason: refundResult.reason,
+        });
+      } else {
+        console.log('[Credits] Refunded due to error:', {
+          logId,
+          error: e.message,
+        });
+      }
     }
     
-    if (e.message === 'AI model request timeout') {
+    const timeoutError = e.message === 'AI model request timeout';
+    if (!refundResult?.success && logId && !isAnonymous) {
+      console.error('[Credits] refund unresolved', {
+        requestId,
+        logId,
+        reason: refundResult?.reason,
+      });
+      return Response.json(
+        {
+          error: 'AI generation failed and credit refund requires manual assistance',
+          refundError: refundResult?.reason,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (timeoutError) {
       return Response.json({ error: e.message }, { status: 504 });
     }
     
@@ -375,17 +431,15 @@ export async function PUT(req: Request) {
     headers: appHeaders
   });
   try {
-    const response = await applyTimeout(
-      (async () => {
-        const resp = streamText({
-          model: openrouter(modelName),
-          messages: messages,
-        });
-        await resp.consumeStream();
-        return await resp.text;
-      })(),
-      timeout
-    );
+    const response = await applyTimeout(async (signal) => {
+      const resp = streamText({
+        model: openrouter(modelName),
+        messages: messages,
+        abortSignal: signal,
+      });
+      await resp.consumeStream();
+      return await resp.text;
+    }, timeout);
     // print AI response log, TODO: DPA
     console.warn('[AI-Response]', { text: response });
     return Response.json({ text: response });
