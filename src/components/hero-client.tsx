@@ -12,6 +12,18 @@ import useSWR, { mutate } from 'swr'
 import { CreditPurchaseModal } from "@/components/pricing/PricingDialog"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const IMAGE_ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp';
+const ACCEPTED_IMAGE_TYPES = IMAGE_ACCEPT.split(',');
+const ACCEPTED_IMAGE_EXTENSIONS = new Set(['jpeg', 'jpg', 'png', 'webp']);
+
+const isAllowedImageFile = (file: File) => {
+  const normalizedType = file.type?.split(';')[0]?.toLowerCase();
+  if (normalizedType && ACCEPTED_IMAGE_TYPES.includes(normalizedType)) {
+    return true;
+  }
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  return extension ? ACCEPTED_IMAGE_EXTENSIONS.has(extension) : false;
+};
 
 interface HeroClientProps {
   translations: {
@@ -119,6 +131,14 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   }, [translateMenuOpen]);
 
   const handleImageSelect = async (file: File) => {
+    if (!isAllowedImageFile(file)) {
+      setErrorDialog({
+        open: true,
+        title: 'Unsupported file type',
+        description: 'Please upload a JPG, PNG, or WEBP image.',
+      });
+      return;
+    }
     if (file.size > appConfig.r2.uploadImageMaxSizeMB * 1024 * 1024) {
       setErrorDialog({
         open: true,
@@ -169,7 +189,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   const handleImageClick = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/jpeg,image/jpg,image/png,image/webp';
+    input.accept = IMAGE_ACCEPT;
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
@@ -478,10 +498,19 @@ export function HeroClient({ translations: t }: HeroClientProps) {
                   onDrop={e => {
                     e.preventDefault();
                     e.stopPropagation();
-                    const file = e.dataTransfer.files?.[0];
-                    if (file) {
-                      handleImageSelect(file);
+                    const files = Array.from(e.dataTransfer.files ?? []);
+                    const validFile = files.find(isAllowedImageFile);
+                    if (!validFile) {
+                      if (files.length > 0) {
+                        setErrorDialog({
+                          open: true,
+                          title: 'Unsupported file type',
+                          description: 'Please upload a JPG, PNG, or WEBP image.',
+                        });
+                      }
+                      return;
                     }
+                    handleImageSelect(validFile);
                   }}
                   className="min-h-[310px] flex items-center justify-center cursor-pointer relative"
                 >
