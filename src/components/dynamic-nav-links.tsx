@@ -35,7 +35,7 @@ export function DynamicNavLinks() {
       href={`/${locale}/activity`}
       data-active={isActive}
       className={cn(
-        'inline-flex items-center gap-1 p-2 text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary [&_svg]:size-4'
+        'inline-flex items-center p-2 text-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
       )}
     >
       {t('activity')}

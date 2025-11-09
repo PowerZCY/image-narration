@@ -3,7 +3,7 @@
 import { Coins } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { ClerkLoaded, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 interface ClerkUserData {
   signIn: string;
@@ -20,6 +20,7 @@ interface ClerkUserData {
 }
 
 export function ClerkUserClient({ data }: { data: ClerkUserData }) {
+  // 只在客户端渲染，避免 hydration 不匹配
   const [isMounted, setIsMounted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -52,22 +53,24 @@ export function ClerkUserClient({ data }: { data: ClerkUserData }) {
     };
   }, [showTooltip]);
 
+  // 服务端和首次客户端渲染时返回 null，避免 hydration 不匹配
+  if (!isMounted) {
+    return null;
+  }
+
   return (
-    <div className="ms-1.5 flex items-center gap-2 h-10 me-3" suppressHydrationWarning>
-      <ClerkLoading>
-        <div className="w-20 h-9 px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-sm" />
-      </ClerkLoading>
+    <div className="ms-1.5 !flex items-center gap-2 h-10 me-3" data-clerk-user-area>
       <ClerkLoaded>
         <SignedOut>
           <SignInButton mode={data.clerkAuthInModal ? 'modal' : 'redirect'}>
-            <button className="w-20 h-9 px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-sm">
+            <button className="w-16 sm:w-20 h-8 sm:h-9 px-1.5 sm:px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-xs sm:text-sm whitespace-nowrap">
               {data.signIn}
             </button>
           </SignInButton>
           {data.showSignUp && (
             <div className="relative z-[1002]">
               <SignUpButton mode={data.clerkAuthInModal ? 'modal' : 'redirect'}>
-                <button className="w-20 h-9 px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-sm">
+                <button className="w-16 sm:w-20 h-8 sm:h-9 px-1.5 sm:px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-xs sm:text-sm whitespace-nowrap">
                   {data.signUp}
                 </button>
               </SignUpButton>
@@ -76,7 +79,7 @@ export function ClerkUserClient({ data }: { data: ClerkUserData }) {
                 ref={badgeRef}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
-                className="absolute -top-1 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-1.5 text-[10px] font-bold text-white shadow-lg ring-2 ring-white dark:ring-gray-900 cursor-default"
+                className="absolute -top-0.5 sm:-top-1 -right-1.5 sm:-right-2 flex h-4 sm:h-5 min-w-4 sm:min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-1 sm:px-1.5 text-[9px] sm:text-[10px] font-bold text-white shadow-lg ring-1 sm:ring-2 ring-white dark:ring-gray-900 cursor-default"
               >
                 {data.signUpBonus}
               </span>

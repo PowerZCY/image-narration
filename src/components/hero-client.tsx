@@ -100,6 +100,30 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   const [selectedLanguage, _setSelectedLanguage] = useState<'Chinese' | 'Japanese' | 'Spanish'>('Chinese');
   const [_isTranslating, setIsTranslating] = useState(false);
   const translateMenuRef = useRef<HTMLDivElement>(null);
+
+  // 响应式高度：根据屏幕尺寸动态调整 prompt 输入框高度
+  const [promptHeight, setPromptHeight] = useState({ min: 305, max: 364 });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        // 极小屏幕
+        setPromptHeight({ min: 150, max: 200 });
+      } else if (width < 768) {
+        // 中等屏幕
+        setPromptHeight({ min: 200, max: 250 });
+      } else {
+        // 桌面端
+        setPromptHeight({ min: 305, max: 364 });
+      }
+    };
+
+    handleResize(); // 初始化
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // 统一错误弹窗管理
   const [errorDialog, setErrorDialog] = useState<{ open: boolean, title: string, description: string }>({ open: false, title: '', description: '' });
   // 积分购买对话框管理
@@ -435,7 +459,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   };
 
   return (
-    <section className="px-16 mx-16 md:mx-32 space-y-8">
+    <section className="px-4 mx-4 sm:px-8 sm:mx-8 md:px-12 md:mx-12 lg:px-16 lg:mx-16 xl:mx-32 space-y-6 sm:space-y-8">
       {/* 错误弹窗 */}
       <AdsAlertDialog
         open={errorDialog.open}
@@ -457,21 +481,21 @@ export function HeroClient({ translations: t }: HeroClientProps) {
         currentBalance={creditModal.balance}
       />
       {/* 头部标题区域 */}
-      <div className="text-center space-y-3">
-        <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+      <div className="text-center space-y-2 sm:space-y-3">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
             {t.main.eyesOn}
           </span>
         </h1>
-        <span className="text-base md:text-2xl leading-tight text-gray-400">
+        <span className="text-sm sm:text-base md:text-xl lg:text-2xl leading-tight text-gray-400">
             {t.main.title}
           </span>
       </div>
 
       {/* 上部分：左右两列布局 */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 items-stretch">
         {/* 左列：图片上传区域 - 占3份 */}
-        <div className="lg:col-span-3 space-y-3">
+        <div className="md:col-span-1 lg:col-span-3 space-y-3">
           {/* 图片上传区域 - 与AIPromptTextarea保持一致的布局结构 */}
           <div className="space-y-2">
             {/* 第一行：标题区域 + 上传框 */}
@@ -512,7 +536,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
                     }
                     handleImageSelect(validFile);
                   }}
-                  className="min-h-[310px] flex items-center justify-center cursor-pointer relative"
+                  className="min-h-[200px] sm:min-h-[250px] md:min-h-[310px] flex items-center justify-center cursor-pointer relative"
                 >
                   {previewImageUrl ? (
                     <div className="w-full space-y-2">
@@ -580,15 +604,15 @@ export function HeroClient({ translations: t }: HeroClientProps) {
                 ? noImageUrls.map((url: string, idx: number) => (
                     <div
                       key={idx}
-                      className="w-12 h-12 bg-muted rounded cursor-pointer hover:bg-muted/80 transition-colors flex items-center justify-center overflow-hidden"
+                      className="w-14 h-14 sm:w-12 sm:h-12 bg-muted rounded cursor-pointer hover:bg-muted/80 transition-colors flex items-center justify-center overflow-hidden"
                       onClick={() => handleExampleImageSelect(url)}
                     >
-                      <Image 
-                        src={url} 
-                        alt="Example" 
-                        width={48} 
-                        height={48} 
-                        className="object-cover w-12 h-12" 
+                      <Image
+                        src={url}
+                        alt="Example"
+                        width={56}
+                        height={56}
+                        className="object-cover w-14 h-14 sm:w-12 sm:h-12"
                         onError={e => { (e.currentTarget as HTMLImageElement).src = fallbackImg; }}
                       />
                     </div>
@@ -596,9 +620,9 @@ export function HeroClient({ translations: t }: HeroClientProps) {
                 : [1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className="w-12 h-12 bg-muted rounded cursor-pointer hover:bg-muted/80 transition-colors flex items-center justify-center"
+                      className="w-14 h-14 sm:w-12 sm:h-12 bg-muted rounded cursor-pointer hover:bg-muted/80 transition-colors flex items-center justify-center"
                     >
-                      <icons.ImageUp className="h-12 w-12" />
+                      <icons.ImageUp className="h-14 w-14 sm:h-12 sm:w-12" />
                     </div>
                   ))}
             </div>
@@ -606,7 +630,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
         </div>
 
         {/* 右列：标题+提示词输入区域+单词统计+生成按钮 - 占2份 */}
-        <div className="lg:col-span-2 space-y-3 flex flex-col">
+        <div className="md:col-span-1 lg:col-span-2 space-y-3 flex flex-col justify-end">
           {/* 标题+提示词输入区域+单词统计 */}
           <AIPromptTextarea
             title={t.prompt.title}
@@ -616,15 +640,15 @@ export function HeroClient({ translations: t }: HeroClientProps) {
             onChange={setPrompt}
             placeholder={t.prompt.placeholder}
             maxWords={400}
-            minHeight={300}
-            maxHeight={300}
+            minHeight={promptHeight.min}
+            maxHeight={promptHeight.max}
             autoScroll={true}
             isWordLimit={isWordLimit}
             onWordLimitChange={handleWordLimitChange}
             extraScrollSpace={100}
           />
           
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-stretch sm:items-center gap-2">
             <GradientButton
               title={
                 !uploadedImageUrl ? t.button.uploadFirst : t.button.generate
@@ -646,10 +670,10 @@ export function HeroClient({ translations: t }: HeroClientProps) {
       {/* 下部分：生成结果显示区域 */}
       <div className="space-y-4">
         {narration ? (
-          <div className="border-2 border-border bg-card/30 rounded-lg p-5 space-y-3">
-            <div className="flex justify-between items-start border-border border-b-2 pb-2">
+          <div className="border-2 border-border bg-card/30 rounded-lg p-4 sm:p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-border border-b-2 pb-2 gap-2">
               <h4 className="text-lg font-semibold text-foreground">{t.result.title}</h4>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-2 sm:gap-1 w-full sm:w-auto">
                 <XButton
                   type="single"
                   minWidth="min-w-[110px]"
@@ -695,7 +719,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
             {translatedText && (
               <div className="mt-6">
                 <hr className="my-2 border-t-2 border-border" />
-                <div className="flex justify-end items-center mb-2">
+                <div className="flex justify-start sm:justify-end items-center mb-2">
                   <XButton
                     type="single"
                     minWidth="min-w-[110px]"

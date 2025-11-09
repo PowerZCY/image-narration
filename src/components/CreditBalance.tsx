@@ -3,7 +3,7 @@
 import React from 'react';
 import useSWR from 'swr';
 import { Database } from 'lucide-react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { CreditPurchaseModal } from '@/components/pricing/PricingDialog';
 import { format } from 'date-fns';
@@ -26,6 +26,7 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
 
   const [showPurchaseModal, setShowPurchaseModal] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
+  const [popoverOpen, setPopoverOpen] = React.useState(false);
 
   if (isLoading || error || !data?.loggedIn) {
     return null;
@@ -36,8 +37,8 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
 
   return (
     <>
-      <HoverCard openDelay={200} closeDelay={100}>
-        <HoverCardTrigger asChild>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+        <PopoverTrigger asChild>
           <button
             className="group relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10"
             onMouseEnter={() => setIsHovered(true)}
@@ -61,9 +62,9 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
 
             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
-        </HoverCardTrigger>
+        </PopoverTrigger>
 
-        <HoverCardContent
+        <PopoverContent
           className="w-72 p-0 border-0 shadow-2xl shadow-purple-500/20"
           side="bottom"
           align="end"
@@ -111,15 +112,18 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
 
               {/* Purchase Button */}
               <Button
-                onClick={() => setShowPurchaseModal(true)}
+                onClick={() => {
+                  setShowPurchaseModal(true);
+                  setPopoverOpen(false);
+                }}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 {translations.buyMore}
               </Button>
             </div>
           </div>
-        </HoverCardContent>
-      </HoverCard>
+        </PopoverContent>
+      </Popover>
 
       <CreditPurchaseModal 
         open={showPurchaseModal}

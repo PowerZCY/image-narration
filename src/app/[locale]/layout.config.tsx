@@ -13,25 +13,25 @@ export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
   const t1 = await getTranslations({ locale: locale, namespace: 'linkPreview' });
   return [
     {
-      icon: <icons.CheckLine />,
       text: t1('blog'),
       url: `/${locale}/blog`,
+      // 桌面端在导航栏显示，移动端通过 CSS 隐藏，只在菜单显示
     },
     {
-      icon: <icons.BTC />,
       text: t1('pricing'),
       url: `/${locale}/pricing`,
+      // 桌面端在导航栏显示，移动端通过 CSS 隐藏，只在菜单显示
     },
     {
       type: 'custom',
-      secondary: false,
+      // Activity 链接（仅登录用户）- 桌面端在导航栏显示，移动端只在菜单显示
       children: <DynamicNavLinks />
     },
     {
       type: 'custom',
-      // false to put the menu on the left, true to put the button on the right
+      // 用户区域（积分+登录按钮/头像）- 只在导航栏显示，不在汉堡菜单中显示
+      on: 'nav',
       secondary: true,
-      // NicknameFilter is also used in its internal useNickname
       children: <DClerkUser locale={locale} clerkAuthInModal={appConfig.style.clerkAuthInModal} />
     },
   ];
