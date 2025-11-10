@@ -642,7 +642,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
             maxWords={400}
             minHeight={promptHeight.min}
             maxHeight={promptHeight.max}
-            autoScroll={true}
+            autoScroll={false}
             isWordLimit={isWordLimit}
             onWordLimitChange={handleWordLimitChange}
             extraScrollSpace={100}
