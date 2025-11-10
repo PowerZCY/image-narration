@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { cn } from '@windrun-huaiin/lib/utils';
 import { globalLucideIcons as icons, getGlobalIcon } from '@windrun-huaiin/base-ui/components/server'
-import { richText } from '@/lib/rich-text';
 
 interface UsageData {
   title: string;
@@ -35,11 +34,11 @@ export async function Usage({
   const data: UsageData = {
     title: t('title'),
     eyesOn: t('eyesOn'),
-    description: richText(t, 'description'),
+    description: t('description'),
     steps: steps.map((step, index) => ({
       id: `usage-step-${index}`,
       title: step.title,
-      description: richText(t, `steps.${index}.description`),
+      description: step.description,
       iconKey: step.iconKey,
       stepNumber: index + 1
     }))

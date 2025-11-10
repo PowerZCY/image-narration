@@ -18,10 +18,15 @@ const defaultTagRenderers = {
 type TagRenderer = (chunks: React.ReactNode) => React.ReactElement;
 type TagRenderers = Record<string, TagRenderer>;
 
+// Type definition for next-intl's translate function with rich text support
+type TranslateFunction = {
+  rich: (key: string, renderers: TagRenderers) => React.ReactNode;
+};
+
 export function createRichTextRenderer(customRenderers?: TagRenderers) {
   const renderers = { ...defaultTagRenderers, ...customRenderers };
 
-  return function richText(t: any, key: string) {
+  return function richText(t: TranslateFunction, key: string) {
     return t.rich(key, renderers);
   };
 }
