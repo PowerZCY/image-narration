@@ -1,7 +1,6 @@
 import { i18n } from '@/i18n';
 import { appConfig } from '@/lib/appConfig';
 import { SiteIcon } from '@/lib/site-config';
-import { globalLucideIcons as icons } from '@windrun-huaiin/base-ui/components/server';
 import { DClerkUser } from '@/components/clerk-user';
 import { DynamicNavLinks } from '@/components/dynamic-nav-links';
 import { type LinkItemType } from 'fumadocs-ui/layouts/docs';

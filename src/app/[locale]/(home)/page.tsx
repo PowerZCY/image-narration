@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero";
-import { FAQ, Features, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main/server";
+import { FAQ, Features, SeoContent, Tips, } from "@windrun-huaiin/third-ui/main/server";
+import { Usage } from "@/components/Usage";
 import { TestInfoPanel } from "@/components/debug/TestInfoPanel";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {

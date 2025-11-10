@@ -487,7 +487,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
             {t.main.eyesOn}
           </span>
         </h1>
-        <span className="text-sm sm:text-base md:text-xl lg:text-2xl leading-tight text-gray-400">
+        <span className="text-base sm:text-base md:text-xl lg:text-2xl leading-tight text-gray-400">
             {t.main.title}
           </span>
       </div>
