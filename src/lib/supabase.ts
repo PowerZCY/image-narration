@@ -16,11 +16,18 @@ export const supabase = createClient(
       autoRefreshToken: false,
       persistSession: false,
     },
+    db: {
+      schema: process.env.SUPABASE_SCHEMA || 'public',
+    },
   }
 );
 
 export const supabaseAnon = process.env.SUPABASE_ANON_KEY
-  ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
+  ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+      db: {
+        schema: process.env.SUPABASE_SCHEMA || 'public',
+      },
+    })
   : null;
 
 export type Database = {
