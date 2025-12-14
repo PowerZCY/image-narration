@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { legalSource } from '@/lib/source-legal';

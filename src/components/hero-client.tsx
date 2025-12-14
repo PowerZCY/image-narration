@@ -459,7 +459,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
   };
 
   return (
-    <section className="px-4 mx-4 sm:px-8 sm:mx-8 md:px-12 md:mx-12 lg:px-16 lg:mx-16 xl:mx-32 space-y-6 sm:space-y-8">
+    <section className="mt-15 px-4 mx-4 sm:px-8 sm:mx-8 md:px-12 md:mx-12 lg:px-16 lg:mx-16 xl:mx-32 space-y-6 sm:space-y-8">
       {/* 错误弹窗 */}
       <AdsAlertDialog
         open={errorDialog.open}
@@ -483,7 +483,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
       {/* 头部标题区域 */}
       <div className="text-center space-y-2 sm:space-y-3">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-600">
             {t.main.eyesOn}
           </span>
         </h1>
@@ -509,7 +509,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
               </div>
               
               {/* 分割线 */}
-              <hr className="border-t-1 border-border" />
+              <hr className="border-t border-border" />
               
               {/* 上传内容区域 */}
               <div className="p-1">
@@ -582,7 +582,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
                     <div className="space-y-4">
                       <icons.ImageUp className="h-12 w-12 mx-auto text-gray-400" />
                       <div className="space-y-3">
-                        <div className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-purple-400 to-pink-600 text-white font-medium rounded-full hover:from-purple-500 hover:to-pink-700 transition-all">
+                        <div className="inline-flex items-center px-6 py-2 bg-linear-to-r from-purple-400 to-pink-600 text-white font-medium rounded-full hover:from-purple-500 hover:to-pink-700 transition-all">
                           {t.upload.choose}
                         </div>
                         <p className="text-muted-foreground">{t.upload.dragTip}</p>
@@ -736,7 +736,7 @@ export function HeroClient({ translations: t }: HeroClientProps) {
           </div>
         ) : (
           <div className="border-2 border-border rounded-lg text-center space-y-3 py-8">
-            <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-600 rounded-full flex items-center justify-center">
+            <div className="mx-auto w-12 h-12 bg-linear-to-r from-purple-400 to-pink-600 rounded-full flex items-center justify-center">
               <icons.Sparkles className="h-6 w-6 text-white" />
             </div>
             <h3 className="text-lg font-semibold text-foreground">{t.ready.title}</h3>

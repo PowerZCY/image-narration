@@ -116,7 +116,7 @@ export function CreditPurchaseModal({
                   relative flex items-center p-4 rounded-2xl cursor-pointer
                   transition-all duration-200 border-2
                   ${selectedTier === tier.tier 
-                    ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-400 text-gray-900 shadow-sm' 
+                    ? 'bg-linear-to-r from-purple-50 to-pink-50 border-purple-400 text-gray-900 shadow-sm' 
                     : 'bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50 text-gray-900'
                   }
                 `}
@@ -125,7 +125,7 @@ export function CreditPurchaseModal({
                 {/* POPULAR 标签 - 显示在边框左边 */}
                 {tier.tier === 'Elite' && (
                   <div className="absolute -top-3 left-4 z-10">
-                    <span className="text-xs px-3 py-1 rounded-full font-medium bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md">
+                    <span className="text-xs px-3 py-1 rounded-full font-medium bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-md">
                       POPULAR
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export function CreditPurchaseModal({
         <div className="px-8 pb-8 pt-2">
           {/* 极简购买按钮 */}
           <Button
-            className="w-full h-12 text-base font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center"
+            className="w-full h-12 text-base font-medium bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center"
             onClick={handlePurchase}
             disabled={loading}
             style={{ borderRadius: '12px' }}

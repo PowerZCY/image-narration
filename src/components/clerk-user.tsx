@@ -63,7 +63,7 @@ export async function DClerkUser({
   };
 
   return (
-    <div className="!flex items-center gap-2" data-user-area-wrapper suppressHydrationWarning>
+    <div className="flex! items-center gap-2" data-user-area-wrapper suppressHydrationWarning>
       {clerkUserId && <CreditBalanceWrapper locale={locale} />}
       <ClerkUserClient data={data} />
     </div>

@@ -16,7 +16,6 @@ interface WebhookResult {
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleUserCreated(data: any): Promise<WebhookResult> {
   const clerkUserId = data.id;
   const email = data.email_addresses?.[0]?.email_address;
@@ -92,7 +91,6 @@ async function handleUserCreated(data: any): Promise<WebhookResult> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleUserUpdated(data: any): Promise<WebhookResult> {
   const clerkUserId = data.id;
   const email = data.email_addresses?.[0]?.email_address;
@@ -135,7 +133,6 @@ async function handleUserUpdated(data: any): Promise<WebhookResult> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleUserDeleted(data: any): Promise<WebhookResult> {
   const clerkUserId = data.id;
   
@@ -228,7 +225,6 @@ export async function POST(req: NextRequest) {
       console.log(`[CLERK_WEBHOOK] Using schema: ${schemaName}`);
       
       // 保存事件记录
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const insertData = {
         event_id: svix_id,                           // MESSAGE ID (Dashboard中显示的)
         event_type: type,                            // EVENT TYPE
@@ -276,7 +272,6 @@ export async function POST(req: NextRequest) {
       }
       
       console.log(`[CLERK_WEBHOOK] Event ${type} saved successfully:`, insertResult);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
     } catch (error) {
       // 记录失败不应阻断webhook处理
       console.error('[CLERK_WEBHOOK] Failed to save event to database:', error);

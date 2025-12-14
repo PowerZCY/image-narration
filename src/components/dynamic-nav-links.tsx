@@ -18,7 +18,9 @@ export function DynamicNavLinks() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setTimeout(() => {
+      setIsMounted(true)
+    }, 0)
   }, []);
 
   // 服务端渲染和首次客户端渲染时返回 null
@@ -35,7 +37,7 @@ export function DynamicNavLinks() {
       href={`/${locale}/activity`}
       data-active={isActive}
       className={cn(
-        'inline-flex items-center p-2 text-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
+        'inline-flex items-center sm:p-2 h-[36px] text-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary'
       )}
     >
       {t('activity')}

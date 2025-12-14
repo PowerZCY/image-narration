@@ -82,12 +82,16 @@ export function TestInfoPanel() {
   };
 
   useEffect(() => {
-    setIsMounted(true);
+    setTimeout(() => {
+      setIsMounted(true)
+    }, 0)
   }, []);
 
   useEffect(() => {
     if (isLoaded) {
-      fetchTestData();
+      setTimeout(() => {
+        fetchTestData();
+      }, 0)
     }
   }, [isLoaded]);
 

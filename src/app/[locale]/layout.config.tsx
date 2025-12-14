@@ -7,8 +7,9 @@ import { type LinkItemType } from 'fumadocs-ui/layouts/docs';
 import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { getTranslations } from 'next-intl/server';
 
+type ExtendedLinkItem = LinkItemType & { mobilePinned?: boolean };
 // home page normal menu
-export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
+export async function homeNavLinks(locale: string): Promise<ExtendedLinkItem[]> {
   const t1 = await getTranslations({ locale: locale, namespace: 'linkPreview' });
   return [
     {
@@ -24,20 +25,22 @@ export async function homeNavLinks(locale: string): Promise<LinkItemType[]> {
     {
       type: 'custom',
       // Activity 链接（仅登录用户）- 桌面端在导航栏显示，移动端只在菜单显示
+      mobilePinned: false,
       children: <DynamicNavLinks />
     },
     {
       type: 'custom',
-      // 用户区域（积分+登录按钮/头像）- 只在导航栏显示，不在汉堡菜单中显示
-      on: 'nav',
+      // false就先排左边的菜单, true就先排右边的按钮
       secondary: true,
+      // true代表在移动端也会出现在主菜单栏上，不会被折叠
+      mobilePinned: true,
       children: <DClerkUser locale={locale} clerkAuthInModal={appConfig.style.clerkAuthInModal} />
     },
   ];
 }
 
 // level special menu
-export async function levelNavLinks(locale: string): Promise<LinkItemType[]> {
+export async function levelNavLinks(locale: string): Promise<ExtendedLinkItem[]> {
   console.log('levelNavLinks TODO: add links here', locale);
   return [];
 }
@@ -50,7 +53,7 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
       title: (
         <>
           <SiteIcon />
-          <span className="font-medium [.uwu_&]:hidden [header_&]:text-[15px]">
+          <span className="font-medium in-[.uwu]:hidden in-[header]:text-[15px]">
             {t('title')}
           </span>
         </>
@@ -58,6 +61,5 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
       transparentMode: 'none',
     },
     i18n,
-    // githubUrl: appConfig.github,
   };
 }

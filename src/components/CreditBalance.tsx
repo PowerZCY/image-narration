@@ -40,7 +40,7 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           <button
-            className="group relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10"
+            className="group relative flex items-center gap-2 px-3 py-1.5 rounded-xl bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             aria-label="Credit balance"
@@ -60,7 +60,7 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
               {balance.toLocaleString()}
             </span>
 
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 rounded-xl bg-linear-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </PopoverTrigger>
 
@@ -70,16 +70,16 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
           align="end"
           sideOffset={8}
         >
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white via-purple-50/80 to-pink-50/90 dark:from-gray-900 dark:via-purple-950/80 dark:to-pink-950/90 border border-purple-200/50 dark:border-purple-800/50">
+          <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-white via-purple-50/80 to-pink-50/90 dark:from-gray-900 dark:via-purple-950/80 dark:to-pink-950/90 border border-purple-200/50 dark:border-purple-800/50">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-full -translate-y-16 translate-x-16" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-pink-500/10 to-transparent rounded-full translate-y-12 -translate-x-12" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-bl from-purple-500/10 to-transparent rounded-full -translate-y-16 translate-x-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-linear-to-tr from-pink-500/10 to-transparent rounded-full translate-y-12 -translate-x-12" />
 
             <div className="relative p-6 space-y-6">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 shadow-lg">
+                  <div className="p-2 rounded-lg bg-linear-to-br from-purple-500 to-pink-600 shadow-lg">
                     <Database className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -88,7 +88,7 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
                 </div>
 
                 <div className="text-right">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  <div className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     {balance.toLocaleString()}
                   </div>
                 </div>
@@ -116,7 +116,7 @@ export function CreditBalance({ translations }: CreditBalanceProps) {
                   setShowPurchaseModal(true);
                   setPopoverOpen(false);
                 }}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="w-full bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 {translations.buyMore}
               </Button>

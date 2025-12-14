@@ -1,9 +1,5 @@
 import { Hero } from "@/components/hero";
-import { Usage } from "@/components/Usage";
-import { Features } from "@/components/Features";
-import { Tips } from "@/components/Tips";
-import { SeoContent } from "@/components/seo-content";
-import { FAQ} from "@/components/faq"
+import { FAQ, Features, SeoContent, Tips, Usage } from "@windrun-huaiin/third-ui/main/server";
 
 import { TestInfoPanel } from "@/components/debug/TestInfoPanel";
 

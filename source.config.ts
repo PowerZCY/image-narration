@@ -34,14 +34,13 @@ export const legal = defineDocs({
 });
 
 export default defineConfig({
-  lastModifiedTime: 'git',
+  lastModifiedTime: 'none',
   mdxOptions: {
     providerImportSource: '@/components/mdx-components',
     // disable remark-image default behavior, use remote URL for all images
     remarkImageOptions: false,
     rehypeCodeOptions: {
       lazy: true,
-      experimentalJSEngine: true,
       inline: 'tailing-curly-colon',
       themes: {
         light: 'catppuccin-latte',

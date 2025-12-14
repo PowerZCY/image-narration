@@ -319,7 +319,7 @@ export function UsageHistoryClient({ clerkUserId, translations: t }: UsageHistor
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 {/* 左侧：紧凑图片 */}
-                <div className="flex-shrink-0 md:self-start">
+                <div className="shrink-0 md:self-start">
                   <button
                     type="button"
                     onClick={() => setPreviewItem(item)}
@@ -348,7 +348,7 @@ export function UsageHistoryClient({ clerkUserId, translations: t }: UsageHistor
                     </h4>
                     <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
                       {item.user_prompt ? (
-                        <p className="text-gray-700 dark:text-gray-300 text-base break-words">
+                        <p className="text-gray-700 dark:text-gray-300 text-base wrap-break-word">
                           {item.user_prompt}
                         </p>
                       ) : (
@@ -390,7 +390,7 @@ export function UsageHistoryClient({ clerkUserId, translations: t }: UsageHistor
                       <div className="text-gray-700 dark:text-gray-300 text-base leading-relaxed">
                         {needsExpansion(item.ai_narration) ? (
                           <>
-                            <p className="whitespace-pre-wrap text-pretty break-words">
+                            <p className="whitespace-pre-wrap text-pretty wrap-break-word">
                               {isExpanded ? item.ai_narration : truncateText(item.ai_narration)}
                             </p>
                             <div className="flex justify-end mt-2">
@@ -405,7 +405,7 @@ export function UsageHistoryClient({ clerkUserId, translations: t }: UsageHistor
                             </div>
                           </>
                         ) : (
-                          <p className="whitespace-pre-wrap text-pretty break-words">{item.ai_narration}</p>
+                          <p className="whitespace-pre-wrap text-pretty wrap-break-word">{item.ai_narration}</p>
                         )}
                       </div>
                     </div>
@@ -466,7 +466,7 @@ export function UsageHistoryClient({ clerkUserId, translations: t }: UsageHistor
 
       {/* 删除确认对话框 */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-sm !bg-white dark:!bg-gray-900 border-2 border-gray-200 dark:border-gray-700 shadow-xl rounded-lg">
+        <DialogContent className="sm:max-w-sm bg-white! dark:bg-gray-900! border-2 border-gray-200 dark:border-gray-700 shadow-xl rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-500" />

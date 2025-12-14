@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { getTranslations } from "next-intl/server"
 import { HeroClient } from "./hero-client"
 

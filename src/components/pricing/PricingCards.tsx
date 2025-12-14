@@ -51,7 +51,7 @@ export function PricingCards() {
       {pricingTiers.map((tier) => (
         <div 
           key={tier.tier}
-          className="relative bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-sm hover:shadow-lg hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 transition-all duration-300 flex flex-col"
+          className="relative bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-sm hover:shadow-lg hover:bg-linear-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 transition-all duration-300 flex flex-col"
         >
           {tier.popular && (
             <div className="absolute top-4 right-4">
@@ -72,10 +72,10 @@ export function PricingCards() {
             </div>
           </div>
           
-          <ul className="space-y-4 mb-8 flex-grow">
+          <ul className="space-y-4 mb-8 grow">
             {tier.features?.map((feature, idx) => (
               <li key={idx} className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                <div className="shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
                   <Check className="h-3 w-3 text-green-600" />
                 </div>
                 <span className="text-gray-700 text-base">{feature}</span>
@@ -86,7 +86,7 @@ export function PricingCards() {
           <button
             onClick={() => handlePurchase(tier.priceId)}
             disabled={loading === tier.priceId}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
+            className="w-full bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
           >
             {loading === tier.priceId ? 'Processing...' : 'Buy Now'}
           </button>

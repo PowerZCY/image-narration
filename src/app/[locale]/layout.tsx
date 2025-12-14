@@ -1,22 +1,15 @@
 import { appConfig, generatedLocales } from "@/lib/appConfig";
-import { fumaI18nCn } from '@windrun-huaiin/third-ui/lib/server';
+import { montserrat } from '@/lib/fonts';
+import { GoogleAnalyticsScript, MicrosoftClarityScript } from "@windrun-huaiin/base-ui/components/server";
+import { cn } from '@windrun-huaiin/lib/utils';
+import { getFumaTranslations } from '@windrun-huaiin/third-ui/fuma/server';
 import { NProgressBar } from '@windrun-huaiin/third-ui/main';
-import { RootProvider } from "fumadocs-ui/provider";
+import { RootProvider } from "fumadocs-ui/provider/next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
-import { Montserrat } from "next/font/google";
+import { ClerkProviderClient } from '@windrun-huaiin/third-ui/clerk';
 import './globals.css';
 import React from 'react';
-import { GoogleAnalyticsScript } from "@windrun-huaiin/base-ui/components";
-import { MicrosoftClarityScript } from "@windrun-huaiin/base-ui/components";
-import { ClerkProvider } from '@clerk/nextjs';
-import { UserInitializer } from '@/components/UserInitializer';
-
-const _montserrat = Montserrat({
-  weight: ['400'],
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 export const dynamic = 'force-dynamic'
 
@@ -59,27 +52,27 @@ export default async function RootLayout({
   const { locale } = await paramsPromise;
   setRequestLocale(locale);
   const messages = await getMessages();
+  const fumaTranslations = await getFumaTranslations(locale);
   return (
     <html lang={locale} suppressHydrationWarning>
-      <ClerkProvider>
-        <NextIntlClientProvider messages={messages}>
-          <body>
-            <UserInitializer />
-            <NProgressBar />
-            <RootProvider
-              i18n={{
-                locale: locale,
-                locales: generatedLocales,
-                translations: { fumaI18nCn }[locale],
-              }}
-            >
-              {children}
-            </RootProvider>
-          </body>
-          <GoogleAnalyticsScript />
-          <MicrosoftClarityScript />
-        </NextIntlClientProvider>
-      </ClerkProvider>
+      <NextIntlClientProvider messages={messages}>
+        <body className={cn(montserrat.className)}>
+          <NProgressBar />
+          <ClerkProviderClient locale={locale}>
+          <RootProvider
+            i18n={{
+              locale: locale,
+              locales: generatedLocales,
+              translations: fumaTranslations,
+            }}
+          >
+            {children}
+          </RootProvider>
+        </ClerkProviderClient>
+        </body>
+        <GoogleAnalyticsScript />
+        <MicrosoftClarityScript />
+      </NextIntlClientProvider>
     </html>
   )
 }
