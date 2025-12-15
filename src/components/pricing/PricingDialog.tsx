@@ -72,24 +72,33 @@ export function CreditPurchaseModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="sm:max-w-md border-0 shadow-2xl overflow-hidden p-0 mt-10" 
+        className="
+          w-[min(94vw,460px)]
+          sm:max-w-md
+          border-0 shadow-2xl p-0
+          mt-10
+          max-h-[calc(100vh-1rem)]
+          sm:max-h-[calc(100vh-2rem)]
+          md:max-h-[calc(100vh-8rem)]
+          overflow-y-auto
+        " 
         style={{ 
           backgroundColor: '#fafafa',
           borderRadius: '20px'
         }}
       >
         {/* 极简头部 */}
-        <div className="px-8 pt-8 pb-4">
+        <div className="px-4 sm:px-8 pt-3 sm:pt-6 pb-1">
           <DialogHeader>
-            <div className="text-left mb-4">
-              <DialogTitle className="text-2xl font-semibold text-gray-900 mb-1">
+            <div className="text-left mb-3 sm:mb-4">
+              <DialogTitle className="text-lg sm:text-2xl font-semibold text-gray-900 mb-1 leading-tight">
                 Get more credits
               </DialogTitle>
-              <p className="text-gray-600 text-base">
+              <p className="text-gray-600 text-xs sm:text-base leading-snug sm:leading-normal">
                 Continue creating amazing AI narrations
               </p>
             </div>
-            <div className="text-gray-600 text-left text-base space-y-2">
+            <div className="text-gray-600 text-left text-xs sm:text-base space-y-0.5 sm:space-y-2 leading-tight sm:leading-normal">
               <div className="flex items-center gap-2">
                 <span className="text-green-600 font-medium">✓</span>
                 <span>One-time purchase, valid for 1 year</span>
@@ -107,13 +116,13 @@ export function CreditPurchaseModal({
         </div>
 
         {/* 极简价格选择区域 */}
-        <div className="px-8 pb-4">
-          <div className="space-y-4">
+        <div className="px-5 sm:px-8">
+          <div className="space-y-1 sm:space-y-2">
             {pricingTiers.map((tier) => (
               <div 
                 key={tier.tier}
                 className={`
-                  relative flex items-center p-4 rounded-2xl cursor-pointer
+                  relative flex items-center p-3 sm:p-4 rounded-2xl cursor-pointer
                   transition-all duration-200 border-2
                   ${selectedTier === tier.tier 
                     ? 'bg-linear-to-r from-purple-50 to-pink-50 border-purple-400 text-gray-900 shadow-sm' 
@@ -124,14 +133,14 @@ export function CreditPurchaseModal({
               >
                 {/* POPULAR 标签 - 显示在边框左边 */}
                 {tier.tier === 'Elite' && (
-                  <div className="absolute -top-3 left-4 z-10">
-                    <span className="text-xs px-3 py-1 rounded-full font-medium bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-md">
+                  <div className="absolute -top-3 left-3 sm:left-4 z-10">
+                    <span className="text-xs px-2.5 sm:px-3 py-1 rounded-full font-medium bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-md">
                       POPULAR
                     </span>
                   </div>
                 )}
                 <label className="flex items-center justify-between w-full cursor-pointer">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     {/* 极简单选按钮 */}
                     <input
                       type="radio"
@@ -158,11 +167,11 @@ export function CreditPurchaseModal({
                     {/* 套餐信息 */}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-lg text-gray-900">
+                        <span className="font-bold text-base sm:text-lg text-gray-900">
                           {tier.label}
                         </span>
                       </div>
-                      <div className="text-base mt-0.5 text-gray-500">
+                      <div className="text-sm sm:text-base mt-0.5 text-gray-500">
                         {tier.credits} credits
                       </div>
                     </div>
@@ -170,10 +179,10 @@ export function CreditPurchaseModal({
                   
                   {/* 价格 */}
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                       {formatPrice(tier.amount, tier.currency)}
                     </div>
-                    <div className="text-sm text-gray-500 tracking-wide">
+                    <div className="text-xs sm:text-sm text-gray-500 tracking-wide">
                       one-time
                     </div>
                   </div>
@@ -184,14 +193,14 @@ export function CreditPurchaseModal({
 
           {/* 积分说明 */}
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500">
               1 credit = 1 image narration
             </p>
           </div>
         </div>
 
         {/* 底部区域 */}
-        <div className="px-8 pb-8 pt-2">
+        <div className="px-5 sm:px-8 pb-5 sm:pb-8 pt-2">
           {/* 极简购买按钮 */}
           <Button
             className="w-full h-12 text-base font-medium bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center"
