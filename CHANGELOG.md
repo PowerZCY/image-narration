@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.6
+
+### Patch Changes
+
+- fix(dependencies): upgrade Stripe to version 20.0.0 and update related configurations
+
 ## 1.5.5
 
 ### Patch Changes
