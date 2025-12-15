@@ -103,22 +103,22 @@ export default function PricingPage() {
     ]
   };
   return (
-    <div className="container  mt-10 mx-auto px-4 py-16">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">
+    <div className="container mt-10 mx-auto px-4 py-8 sm:py-16 min-h-[90vh]">
+      <div className="text-center mb-10 sm:mb-12">
+        <h1 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 leading-tight">
           Simple, Transparent Pricing
         </h1>
-        <div className="mt-6 flex flex-wrap justify-center gap-6 text-lg text-gray-600 dark:text-gray-400">
+        <div className="mt-2 sm:mt-6 flex flex-wrap justify-center gap-1 sm:gap-6 text-base sm:text-lg text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-2">
-            <span className="text-green-600 font-medium">✓</span>
+            <span className="text-green-600 font-medium">&nbsp;✓</span>
             <span>No subscription required</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-green-600 font-medium">✓</span>
+            <span className="text-green-600 font-medium">&nbsp;✓</span>
             <span>One-time payment</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-green-600 font-medium">✓</span>
+            <span className="text-green-600 font-medium">&nbsp;✓</span>
             <span>Credits valid for 1 year</span>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function PricingPage() {
 
       <PricingCards />
 
-      <div className="mt-8 text-center">
+      <div className="mt-4 sm:mt-8 text-center">
         <p className="text-base text-muted-foreground">
           1 credit = 1 image narration
         </p>

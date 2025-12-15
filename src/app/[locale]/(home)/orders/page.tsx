@@ -22,7 +22,7 @@ export default async function OrdersPage({
 
   return (
     <main className="flex-1">
-      <div className="container mt-15 mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mt-15 mx-auto px-4 py-8 max-w-4xl min-h-[90vh]">
         {/* 页面标题 */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
