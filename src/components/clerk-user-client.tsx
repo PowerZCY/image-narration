@@ -64,11 +64,6 @@ export function ClerkUserClient({ data }: { data: ClerkUserData }) {
     <div className="ms-1.5 flex! items-center gap-2 h-10 me-3" data-clerk-user-area>
       <ClerkLoaded>
         <SignedOut>
-          <SignInButton mode={data.clerkAuthInModal ? 'modal' : 'redirect'}>
-            <button className="w-16 sm:w-20 h-8 sm:h-9 px-1.5 sm:px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-xs sm:text-sm whitespace-nowrap">
-              {data.signIn}
-            </button>
-          </SignInButton>
           {data.showSignUp && (
             <div className="relative z-1002">
               <SignUpButton mode={data.clerkAuthInModal ? 'modal' : 'redirect'}>
@@ -101,6 +96,11 @@ export function ClerkUserClient({ data }: { data: ClerkUserData }) {
               )}
             </div>
           )}
+          <SignInButton mode={data.clerkAuthInModal ? 'modal' : 'redirect'}>
+            <button className="w-16 sm:w-20 h-8 sm:h-9 px-1.5 sm:px-2 border border-gray-300 rounded-full hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 text-center text-xs sm:text-sm whitespace-nowrap">
+              {data.signIn}
+            </button>
+          </SignInButton>
         </SignedOut>
         <SignedIn>
           <UserButton
