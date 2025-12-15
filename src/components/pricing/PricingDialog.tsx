@@ -72,7 +72,7 @@ export function CreditPurchaseModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="sm:max-w-md border-0 shadow-2xl overflow-hidden p-0" 
+        className="sm:max-w-md border-0 shadow-2xl overflow-hidden p-0 mt-10" 
         style={{ 
           backgroundColor: '#fafafa',
           borderRadius: '20px'

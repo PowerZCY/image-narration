@@ -16,7 +16,7 @@ export default async function UsageHistoryPage({ params }: { params: Promise<{ l
   const t = await getTranslations({ locale, namespace: 'activity' });
 
   return (
-    <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl min-h-[70vh]">
+    <div className="flex-1 container mt-15 mx-auto px-4 py-8 max-w-4xl min-h-[70vh]">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {t('title')}
