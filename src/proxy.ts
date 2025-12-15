@@ -25,6 +25,8 @@ const publicApiRoutes = createRouteMatcher([
   '/api/payments/webhook',      // Stripe支付webhook
   '/api/clerk/webhook',         // Clerk用户管理webhook  
   '/api/anonymous-usage',       // 匿名用户使用统计
+  '/api/user/credits',  // 用户积分
+  '/api/user/last-order'  // 用户最近订单信息
 ])
 
 // v6 官方推荐写法：直接 export default clerkMiddleware(handler, options)

@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -49,7 +49,9 @@ export function TestInfoPanel() {
   const [loading, setLoading] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const defaultExpanded = process.env.NEXT_PUBLIC_TEST_INFO_PANEL_EXPEND === 'true';
+  const [isCollapsed, setIsCollapsed] = useState(!defaultExpanded);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const fetchTestData = async () => {
     setLoading(true);
@@ -62,6 +64,8 @@ export function TestInfoPanel() {
         // 获取最近一笔订单
         fetch('/api/user/last-order').then(res => res.ok ? res.json() : null)
       ]);
+
+      console.log(results);
 
       setData({
         userCredits: results[0].status === 'fulfilled' ? results[0].value : null,
@@ -95,16 +99,29 @@ export function TestInfoPanel() {
     }
   }, [isLoaded]);
 
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!panelRef.current) return;
+      if (!isCollapsed && !panelRef.current.contains(event.target as Node)) {
+        setIsCollapsed(true);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMounted, isCollapsed]);
+
   // 仅在非生产环境且启用了测试面板时显示
-  const showPanel = process.env.NODE_ENV !== 'production' && 
-    (process.env.NEXT_PUBLIC_TEST_INFO_PANEL_ENABLED === 'true' || process.env.NODE_ENV === 'development');
+  const showPanel = process.env.NODE_ENV === 'development'
 
   if (!showPanel || !isMounted) return null;
 
   return (
-    <div className="fixed top-20 left-4 z-50">
+    <div ref={panelRef} className="fixed top-25 left-2 sm:left-4 z-50">
       {/* 测试面板内容 */}
-      <div className={`transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'w-96 opacity-100'}`}>
+      <div className={`transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100'}`}>
         {!isCollapsed && (
           <Card className="max-h-[80vh] overflow-y-auto bg-background/95 backdrop-blur shadow-lg border">
           <CardHeader className="pb-3">
@@ -141,7 +158,7 @@ export function TestInfoPanel() {
               <>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Clerk ID:</span>
-                  <code className="text-xs bg-muted px-1 rounded break-all">
+                  <code className="text-[10px] bg-muted px-1 rounded break-all">
                     {user.id}
                   </code>
                 </div>
@@ -173,7 +190,7 @@ export function TestInfoPanel() {
           <div className="pl-6 space-y-1 text-xs">
             <div className="flex justify-between">
               <span className="text-muted-foreground">匿名ID:</span>
-              <code className="text-xs bg-muted px-1 rounded break-all">
+              <code className="text-[10px] bg-muted px-1 rounded break-all">
                 {data.anonymousUsage?.anonId || '未生成'}
               </code>
             </div>
