@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.5.7
+
+### Patch Changes
+
+- fix(style): fixed style
+
 ## 1.5.6
 
 ### Patch Changes

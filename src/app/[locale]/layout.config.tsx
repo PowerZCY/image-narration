@@ -3,11 +3,10 @@ import { appConfig } from '@/lib/appConfig';
 import { SiteIcon } from '@/lib/site-config';
 import { DClerkUser } from '@/components/clerk-user';
 import { DynamicNavLinks } from '@/components/dynamic-nav-links';
-import { type LinkItemType } from 'fumadocs-ui/layouts/docs';
 import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { getTranslations } from 'next-intl/server';
+import { ExtendedLinkItem, HomeTitle } from '@windrun-huaiin/third-ui/fuma/base';
 
-type ExtendedLinkItem = LinkItemType & { mobilePinned?: boolean };
 // home page normal menu
 export async function homeNavLinks(locale: string): Promise<ExtendedLinkItem[]> {
   const t1 = await getTranslations({ locale: locale, namespace: 'linkPreview' });
@@ -53,9 +52,9 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
       title: (
         <>
           <SiteIcon />
-          <span className="font-medium in-[.uwu]:hidden in-[header]:text-[clamp(8px,3vw,15px)]!">
+          <HomeTitle>
             {t('title')}
-          </span>
+          </HomeTitle>
         </>
       ),
       transparentMode: 'none',

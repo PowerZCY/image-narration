@@ -287,6 +287,8 @@
     "sitemap": "Sitemap",
     "contactUs": "Contact Us",
     "email": "support@imagenarration.com",
+    "clickToCopyText": "Click to copy",
+    "copiedText": "Copied!",
     "thanks": "Thanks to"
   },
   "clerk": {
