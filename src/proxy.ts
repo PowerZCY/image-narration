@@ -87,7 +87,7 @@ export default clerkMiddleware(
 export const config = {
   matcher: [
     // Include API routes for authentication, skip Next.js internals and static files
-    "/((?!_next|sitemap.xml?|robots.txt?|[^?]*.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!_next|sitemap.xml?|robots.txt?|[^?]*.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|txt|docx?|xlsx?|zip|webmanifest)).*)",
     // Include user and payment API routes
     "/api/user/(.*)",
     "/api/payments/(.*)",
