@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { OrdersList } from '@/components/orders/OrdersList';
+import { getAsNeededLocalizedUrl } from '@windrun-huaiin/lib';
 
 export default async function OrdersPage({ 
   params 
@@ -15,7 +16,8 @@ export default async function OrdersPage({
   const { userId: clerkUserId } = await auth();
   
   if (!clerkUserId) {
-    redirect(`/${locale}/sign-in`);
+    const signPath = getAsNeededLocalizedUrl(locale, '/sign-in');
+    redirect(signPath);
   }
 
   const t = await getTranslations({ locale, namespace: 'orders' });

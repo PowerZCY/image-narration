@@ -5,9 +5,8 @@ import { appConfig } from "@/lib/appConfig";
 
 const intlMiddleware = createMiddleware({
   locales: appConfig.i18n.locales,
-
   defaultLocale: appConfig.i18n.defaultLocale,
-  localePrefix: "always",
+  localePrefix: appConfig.i18n.localePrefixAsNeeded ? "as-needed" : "always", 
   localeDetection: false
 });
 
@@ -33,6 +32,29 @@ const publicApiRoutes = createRouteMatcher([
 // 完全不需要再包一层函数，也不需要手动 (req)
 export default clerkMiddleware(
   async (auth, req: NextRequest) => {
+    const { defaultLocale, locales } = appConfig.i18n;
+    const pathname = req.nextUrl.pathname;
+    const hasLocalePrefix = locales.some(
+      (loc) => pathname === `/${loc}` || pathname.startsWith(`/${loc}/`)
+    );
+
+    // 对于无语言前缀的页面请求，根据配置进行处理
+    // 避免落不到 [locale] 路由。
+    if (!hasLocalePrefix && !pathname.startsWith('/api/')) {
+      const url = req.nextUrl.clone();
+      url.pathname = `/${defaultLocale}${pathname}`;
+
+      if (appConfig.i18n.localePrefixAsNeeded) {
+        // as-needed: 内部rewrite，用户URL保持无前缀
+        console.log('[middleware rewrite]', { from: pathname, to: url.pathname });
+        return NextResponse.rewrite(url);
+      } else {
+        // always: 重定向给用户，让他们看到前缀URL
+        console.log('[middleware redirect]', { from: pathname, to: url.pathname });
+        return NextResponse.redirect(url);
+      }
+    }
+
     // 跳过公开API路由的身份验证
     if (publicApiRoutes(req)) {
       return NextResponse.next();
@@ -50,12 +72,6 @@ export default clerkMiddleware(
     // Skip i18n middleware for API routes
     if (req.nextUrl.pathname.startsWith('/api/')) {
       return NextResponse.next();
-    }
-
-    // handle root path to default locale permanent redirect
-    if (req.nextUrl.pathname === '/') {
-      const defaultLocale = appConfig.i18n.defaultLocale;
-      return NextResponse.redirect(new URL(`/${defaultLocale}`, req.url), 301);
     }
 
     // handle trailing slash redirect

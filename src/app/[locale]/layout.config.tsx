@@ -1,4 +1,3 @@
-import { i18n } from '@/i18n';
 import { appConfig } from '@/lib/appConfig';
 import { SiteIcon } from '@/lib/site-config';
 import { DClerkUser } from '@/components/clerk-user';
@@ -6,6 +5,7 @@ import { DynamicNavLinks } from '@/components/dynamic-nav-links';
 import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { getTranslations } from 'next-intl/server';
 import { ExtendedLinkItem, HomeTitle } from '@windrun-huaiin/third-ui/fuma/base';
+import { getAsNeededLocalizedUrl } from '@windrun-huaiin/lib';
 
 // home page normal menu
 export async function homeNavLinks(locale: string): Promise<ExtendedLinkItem[]> {
@@ -13,13 +13,11 @@ export async function homeNavLinks(locale: string): Promise<ExtendedLinkItem[]> 
   return [
     {
       text: t1('blog'),
-      url: `/${locale}/blog`,
-      // 桌面端在导航栏显示，移动端通过 CSS 隐藏，只在菜单显示
+      url: getAsNeededLocalizedUrl(locale, '/blog'),
     },
     {
       text: t1('pricing'),
-      url: `/${locale}/pricing`,
-      // 桌面端在导航栏显示，移动端通过 CSS 隐藏，只在菜单显示
+      url: getAsNeededLocalizedUrl(locale, '/pricing'),
     },
     {
       type: 'custom',
@@ -48,7 +46,7 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
   const t = await getTranslations({ locale: locale, namespace: 'home' });
   return {
     nav: {
-      url: `/${locale}`,
+      url: getAsNeededLocalizedUrl(locale, '/'),
       title: (
         <>
           <SiteIcon />
@@ -59,6 +57,5 @@ export async function baseOptions(locale: string): Promise<BaseLayoutProps> {
       ),
       transparentMode: 'none',
     },
-    i18n,
   };
 }

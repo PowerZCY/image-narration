@@ -1,5 +1,11 @@
 # image-narration
 
+## 1.6.0
+
+### Minor Changes
+
+- fix(locale): upgrade
+
 ## 1.5.7
 
 ### Patch Changes

@@ -31,5 +31,7 @@ export const appConfig = {
 // 导出国际化辅助函数
 export const { isSupportedLocale, getValidLocale, generatedLocales } = createI18nHelpers(appConfig.i18n);
 
+export const { localePrefixAsNeeded, defaultLocale } = appConfig.i18n;
+
 // 便捷常量直接从 shortcuts 导出
 export const { iconColor, watermark, showBanner, clerkPageBanner, clerkAuthInModal, placeHolderImage } = appConfig.shortcuts;

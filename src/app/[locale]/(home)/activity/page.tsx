@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { UsageHistoryClient } from './usage-history-client';
+import { getAsNeededLocalizedUrl } from '@windrun-huaiin/lib';
 
 export default async function UsageHistoryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -9,7 +10,9 @@ export default async function UsageHistoryPage({ params }: { params: Promise<{ l
   
   // 检查用户是否已登录，未登录重定向到登录页面
   if (!userId) {
-    redirect(`/${locale}/sign-in?redirect=${encodeURIComponent(`/${locale}/activity`)}`);
+    const signPath = getAsNeededLocalizedUrl(locale, '/sign-in');
+    const activityPath = getAsNeededLocalizedUrl(locale, '/activity');
+    redirect(`${signPath}?redirect=${encodeURIComponent(`${activityPath}`)}`);
   }
 
   // 获取翻译
